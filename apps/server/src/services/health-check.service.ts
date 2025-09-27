@@ -32,9 +32,11 @@ interface HealthCheck {
 export class HealthCheckService {
   constructor(private configService: ConfigService) {}
 
+  private getErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
+  }
+
   async performHealthCheck(): Promise<HealthCheckResult> {
-    const startTime = Date.now();
-    
     const checks = await Promise.allSettled([
       this.checkDatabase(),
       this.checkStorage(),
@@ -103,7 +105,7 @@ export class HealthCheckService {
       return {
         status: 'unhealthy',
         responseTime: Date.now() - startTime,
-        error: error.message,
+        error: this.getErrorMessage(error),
         details: {
           connection: 'failed',
           readWrite: 'failed',
@@ -145,7 +147,7 @@ export class HealthCheckService {
       return {
         status: 'unhealthy',
         responseTime: Date.now() - startTime,
-        error: error.message,
+        error: this.getErrorMessage(error),
         details: {
           connection: 'failed',
           readWrite: 'failed',
@@ -176,7 +178,7 @@ export class HealthCheckService {
       return {
         status: 'unhealthy',
         responseTime: Date.now() - startTime,
-        error: error.message,
+        error: this.getErrorMessage(error),
         details: {
           connection: 'failed',
         },
@@ -216,7 +218,7 @@ export class HealthCheckService {
       return {
         status: 'degraded',
         responseTime: Date.now() - startTime,
-        error: error.message,
+        error: this.getErrorMessage(error),
         details: {
           stripe: 'failed',
         },
@@ -229,9 +231,6 @@ export class HealthCheckService {
     
     try {
       // Test FCM connection by validating configuration
-      const messaging = admin.messaging();
-      
-      // Validate FCM configuration without sending actual message
       const fcmKey = this.configService.get('FCM_SERVER_KEY');
       if (!fcmKey) {
         throw new Error('FCM not configured');
@@ -248,7 +247,7 @@ export class HealthCheckService {
       return {
         status: 'degraded',
         responseTime: Date.now() - startTime,
-        error: error.message,
+        error: this.getErrorMessage(error),
         details: {
           fcm: 'failed',
         },
@@ -260,7 +259,7 @@ export class HealthCheckService {
     return {
       status: 'unhealthy',
       responseTime: 0,
-      error: error?.message || 'Unknown error',
+      error: this.getErrorMessage(error),
     };
   }
 

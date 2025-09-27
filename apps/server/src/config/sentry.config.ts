@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/node';
-import { ProfilingIntegration } from '@sentry/profiling-node';
+import { nodeProfilingIntegration } from '@sentry/profiling-node';
 
 const SENTRY_DSN = process.env.SENTRY_DSN;
 const ENVIRONMENT = process.env.NODE_ENV || 'development';
@@ -46,9 +46,9 @@ export const initSentry = () => {
     
     // Integrations
     integrations: [
-      new Sentry.Integrations.Http({ tracing: true }),
-      new Sentry.Integrations.Express({ app: undefined }),
-      new ProfilingIntegration(),
+      Sentry.httpIntegration(),
+      Sentry.expressIntegration(),
+      nodeProfilingIntegration(),
     ],
     
     // Release tracking
@@ -143,26 +143,19 @@ export const addBreadcrumb = (
 
 // Performance monitoring helpers
 export const startTransaction = (name: string, op: string) => {
-  return Sentry.startTransaction({ name, op });
+  return Sentry.startSpan({ name, op }, () => {});
 };
 
 export const measurePerformance = async <T>(
   name: string,
   operation: () => Promise<T>
 ): Promise<T> => {
-  const transaction = Sentry.startTransaction({
-    name,
-    op: 'function',
+  return Sentry.startSpan({ name, op: 'function' }, async () => {
+    try {
+      return await operation();
+    } catch (error) {
+      Sentry.captureException(error);
+      throw error;
+    }
   });
-
-  try {
-    const result = await operation();
-    transaction.setStatus('ok');
-    return result;
-  } catch (error) {
-    transaction.setStatus('internal_error');
-    throw error;
-  } finally {
-    transaction.finish();
-  }
 };

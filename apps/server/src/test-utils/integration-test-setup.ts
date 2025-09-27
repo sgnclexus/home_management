@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '../app.module';
-import * as request from 'supertest';
+const request = require('supertest');
 
 export class IntegrationTestSetup {
   private app: INestApplication;
@@ -64,17 +64,17 @@ export class IntegrationTestSetup {
     return this.module;
   }
 
-  request(): request.SuperTest<request.Test> {
+  request() {
     return request(this.app.getHttpServer());
   }
 
   // Helper method to create authenticated requests
-  authenticatedRequest(token: string = 'mock-token'): request.SuperTest<request.Test> {
+  authenticatedRequest(token: string = 'mock-token') {
     return this.request().set('Authorization', `Bearer ${token}`);
   }
 
   // Helper method to create admin requests
-  adminRequest(): request.SuperTest<request.Test> {
+  adminRequest() {
     return this.authenticatedRequest('admin-token');
   }
 }

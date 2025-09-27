@@ -30,10 +30,11 @@ export function usePushNotifications() {
   const [subscription, setSubscription] = useState<PushSubscription | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     // Initialize permission state
-    if ('Notification' in window) {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
       setPermission(Notification.permission);
     }
 
@@ -43,12 +44,16 @@ export function usePushNotifications() {
         await pushNotificationManager.initialize();
         const existingSubscription = await pushNotificationManager.getSubscription();
         setSubscription(existingSubscription);
+        setIsInitialized(true);
       } catch (err) {
         console.error('Failed to initialize push notifications:', err);
+        setIsInitialized(true); // Still mark as initialized even if it fails
       }
     };
 
-    initializePushNotifications();
+    if (typeof window !== 'undefined') {
+      initializePushNotifications();
+    }
   }, []);
 
   const requestPermission = async (): Promise<NotificationPermission> => {
@@ -120,15 +125,21 @@ export function usePushNotifications() {
     requestPermission,
     subscribe,
     unsubscribe,
-    isSupported: 'serviceWorker' in navigator && 'PushManager' in window,
+    isInitialized,
+    isSupported: typeof window !== 'undefined' && 'serviceWorker' in navigator && 'PushManager' in window,
   };
 }
 
 // Hook for network status
 export function useNetworkStatus() {
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [isOnline, setIsOnline] = useState(true); // Default to online for SSR
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
+    // Initialize with actual network status on client
+    setIsOnline(navigator.onLine);
+    setIsInitialized(true);
+    
     const unsubscribe = networkStatusManager.onNetworkStatusChange(setIsOnline);
     return unsubscribe;
   }, []);
@@ -136,6 +147,7 @@ export function useNetworkStatus() {
   return {
     isOnline,
     isOffline: !isOnline,
+    isInitialized,
   };
 }
 
@@ -210,7 +222,7 @@ export function usePWAUpdate() {
   const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
-    if ('serviceWorker' in navigator) {
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         // Reload the page when a new service worker takes control
         window.location.reload();
@@ -233,7 +245,7 @@ export function usePWAUpdate() {
   }, []);
 
   const applyUpdate = async (): Promise<void> => {
-    if (!updateAvailable) return;
+    if (!updateAvailable || typeof window === 'undefined') return;
 
     setIsUpdating(true);
 

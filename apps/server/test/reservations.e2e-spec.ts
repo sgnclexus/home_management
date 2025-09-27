@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
-import { UserRole, ReservationStatus } from '@home-management/types';
+import { UserRole } from '@home-management/types';
 
 describe('Reservations (e2e)', () => {
   let app: INestApplication;
@@ -72,7 +72,7 @@ describe('Reservations (e2e)', () => {
         .expect(201);
 
       expect(response.body).toHaveProperty('id');
-      expect(response.body).toHaveProperty('status', ReservationStatus.CONFIRMED);
+      expect(response.body).toHaveProperty('status', 'confirmed');
       expect(response.body).toHaveProperty('areaId', 'gym');
     });
 
@@ -100,7 +100,7 @@ describe('Reservations (e2e)', () => {
               id: 'existing-reservation',
               startTime: new Date('2024-01-15T10:30:00Z'),
               endTime: new Date('2024-01-15T11:30:00Z'),
-              status: ReservationStatus.CONFIRMED,
+              status: 'confirmed',
             }),
           },
         ],
@@ -142,7 +142,7 @@ describe('Reservations (e2e)', () => {
             data: () => ({
               startTime: new Date('2024-01-15T10:00:00Z'),
               endTime: new Date('2024-01-15T11:00:00Z'),
-              status: ReservationStatus.CONFIRMED,
+              status: 'confirmed',
             }),
           },
         ],
@@ -177,7 +177,7 @@ describe('Reservations (e2e)', () => {
               areaId: 'gym',
               startTime: new Date('2024-01-15T10:00:00Z'),
               endTime: new Date('2024-01-15T11:00:00Z'),
-              status: ReservationStatus.CONFIRMED,
+              status: 'confirmed',
             }),
           },
         ],
@@ -205,7 +205,7 @@ describe('Reservations (e2e)', () => {
         data: () => ({
           id: 'reservation-123',
           userId: 'resident-id',
-          status: ReservationStatus.CONFIRMED,
+          status: 'confirmed',
           startTime: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
         }),
       });
@@ -231,7 +231,7 @@ describe('Reservations (e2e)', () => {
         data: () => ({
           id: 'reservation-123',
           userId: 'resident-id',
-          status: ReservationStatus.CONFIRMED,
+          status: 'confirmed',
           startTime: new Date(Date.now() + 12 * 60 * 60 * 1000), // 12 hours from now
         }),
       });
@@ -268,7 +268,7 @@ describe('Reservations (e2e)', () => {
               id: 'reservation-1',
               userId: 'resident-1',
               areaId: 'gym',
-              status: ReservationStatus.CONFIRMED,
+              status: 'confirmed',
             }),
           },
         ],
@@ -303,7 +303,7 @@ describe('Reservations (e2e)', () => {
         data: () => ({
           id: 'reservation-123',
           userId: 'resident-id',
-          status: ReservationStatus.CONFIRMED,
+          status: 'confirmed',
         }),
       });
 

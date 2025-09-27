@@ -3,7 +3,7 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as functions from 'firebase-functions';
-import * as express from 'express';
+import express from 'express';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './filters/global-exception.filter';
 import { SecurityInterceptor } from './interceptors/security.interceptor';
@@ -48,11 +48,11 @@ const createNestServer = async (expressInstance: express.Express) => {
   // Global filters
   app.useGlobalFilters(new GlobalExceptionFilter());
 
-  // Global interceptors
-  app.useGlobalInterceptors(
-    new SecurityInterceptor(),
-    new AuditLogInterceptor()
-  );
+  // Global interceptors will be configured in the app module
+  // app.useGlobalInterceptors(
+  //   new SecurityInterceptor(),
+  //   new AuditLogInterceptor()
+  // );
 
   return app.init();
 };

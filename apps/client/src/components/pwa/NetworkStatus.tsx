@@ -12,7 +12,12 @@ export const NetworkStatus: React.FC<NetworkStatusProps> = ({
   showOnlineStatus = false,
 }) => {
   const { t } = useTranslation('common');
-  const { isOnline, isOffline } = useNetworkStatus();
+  const { isOnline, isOffline, isInitialized } = useNetworkStatus();
+
+  // Don't render anything during SSR or before initialization
+  if (!isInitialized) {
+    return null;
+  }
 
   // Only show offline status by default, unless showOnlineStatus is true
   if (isOnline && !showOnlineStatus) {

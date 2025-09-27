@@ -6,7 +6,6 @@ const nextConfig = {
   // Performance optimizations
   experimental: {
     optimizeCss: true,
-    optimizePackageImports: ['@home-management/types', '@home-management/utils'],
   },
 
   // Bundle analyzer

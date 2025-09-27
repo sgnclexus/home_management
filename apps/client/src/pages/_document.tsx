@@ -34,8 +34,7 @@ export default function Document() {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         
-        {/* Viewport for mobile optimization */}
-        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover" />
+
       </Head>
       <body>
         <Main />

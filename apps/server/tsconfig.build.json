@@ -1,5 +1,4 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
     "declaration": true,
@@ -19,6 +18,10 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "noEmit": false,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
     "paths": {
       "@/*": ["./src/*"],
       "@home-management/types": ["../../libs/types/src"],
@@ -28,11 +31,11 @@
     }
   },
   "include": [
-    "src/**/*",
-    "test/**/*"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "test/**/*"
   ]
 }

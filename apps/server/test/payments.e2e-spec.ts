@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
-import { UserRole, PaymentStatus } from '@home-management/types';
+import { UserRole } from '@home-management/types';
 
 describe('Payments (e2e)', () => {
   let app: INestApplication;
@@ -58,7 +58,7 @@ describe('Payments (e2e)', () => {
 
       expect(response.body).toHaveProperty('id');
       expect(response.body).toHaveProperty('amount', 500);
-      expect(response.body).toHaveProperty('status', PaymentStatus.PENDING);
+      expect(response.body).toHaveProperty('status', 'pending');
     });
 
     it('should process payment with Stripe', async () => {
@@ -76,7 +76,7 @@ describe('Payments (e2e)', () => {
           id: 'payment-123',
           userId: 'resident-id',
           amount: 500,
-          status: PaymentStatus.PENDING,
+          status: 'pending',
         }),
       });
 
@@ -152,7 +152,7 @@ describe('Payments (e2e)', () => {
             data: () => ({
               id: 'payment-1',
               amount: 500,
-              status: PaymentStatus.PAID,
+              status: 'paid',
               createdAt: new Date(),
             }),
           },
@@ -161,7 +161,7 @@ describe('Payments (e2e)', () => {
             data: () => ({
               id: 'payment-2',
               amount: 500,
-              status: PaymentStatus.PENDING,
+              status: 'pending',
               createdAt: new Date(),
             }),
           },
@@ -174,7 +174,7 @@ describe('Payments (e2e)', () => {
         .expect(200);
 
       expect(response.body).toHaveLength(2);
-      expect(response.body[0]).toHaveProperty('status', PaymentStatus.PAID);
+      expect(response.body[0]).toHaveProperty('status', 'paid');
     });
 
     it('should allow admin to view all payments', async () => {
@@ -201,7 +201,7 @@ describe('Payments (e2e)', () => {
               id: 'payment-1',
               userId: 'resident-1',
               amount: 500,
-              status: PaymentStatus.PAID,
+              status: 'paid',
             }),
           },
         ],
@@ -243,7 +243,7 @@ describe('Payments (e2e)', () => {
                 id: 'payment-123',
                 userId: 'resident-id',
                 amount: 500,
-                status: PaymentStatus.PENDING,
+                status: 'pending',
               }),
             }),
             update: jest.fn(),

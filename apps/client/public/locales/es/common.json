@@ -29,7 +29,47 @@
   "role": "Rol",
   "app": {
     "title": "Gestión Residencial",
-    "subtitle": "Sistema de Administración de Condominios"
+    "subtitle": "Sistema de Administración de Condominios",
+    "name": "Gestión Residencial"
+  },
+  "navigation": {
+    "dashboard": "Panel de Control",
+    "payments": "Pagos",
+    "reservations": "Reservas",
+    "meetings": "Reuniones",
+    "admin": "Administración",
+    "back": "Volver",
+    "menu": "Abrir menú",
+    "close": "Cerrar menú"
+  },
+  "pwa": {
+    "installPrompt": {
+      "title": "Instalar App de Gestión Residencial",
+      "description": "Instale nuestra aplicación para una mejor experiencia con acceso sin conexión y notificaciones push.",
+      "install": "Instalar",
+      "dismiss": "Ahora no"
+    },
+    "updatePrompt": {
+      "title": "Actualización de App Disponible",
+      "description": "Una nueva versión de la aplicación está disponible con mejoras y correcciones de errores.",
+      "update": "Actualizar Ahora",
+      "updating": "Actualizando..."
+    },
+    "networkStatus": {
+      "offline": "Actualmente está sin conexión. Algunas funciones pueden estar limitadas.",
+      "online": "Conexión restaurada. Todas las funciones están disponibles."
+    },
+    "pushNotifications": {
+      "title": "Notificaciones Push",
+      "description": "Reciba notificaciones sobre actualizaciones importantes, recordatorios de pagos y anuncios de reuniones.",
+      "enabled": "Habilitado",
+      "disabled": "Deshabilitado",
+      "enable": "Habilitar Notificaciones",
+      "enabling": "Habilitando...",
+      "notSupported": "Las notificaciones push no son compatibles con este navegador.",
+      "permissionDenied": "Las notificaciones están bloqueadas. Por favor, habilítelas en la configuración de su navegador.",
+      "subscribed": "Recibirá notificaciones sobre actualizaciones importantes y recordatorios."
+    }
   },
   "auth": {
     "login": "Iniciar Sesión",

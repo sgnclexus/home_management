@@ -46,6 +46,10 @@ export class UptimeMonitoringService {
     this.initializeDefaultChecks();
   }
 
+  private getErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
+  }
+
   private initializeDefaultChecks(): void {
     const baseUrl = this.configService.get('API_BASE_URL') || 'http://localhost:3001';
     const frontendUrl = this.configService.get('FRONTEND_URL') || 'http://localhost:3000';
@@ -213,7 +217,7 @@ export class UptimeMonitoringService {
         timestamp,
         status: 'down',
         responseTime,
-        error: error.message,
+        error: this.getErrorMessage(error),
         location,
       };
 

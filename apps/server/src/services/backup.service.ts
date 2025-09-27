@@ -33,6 +33,10 @@ export class BackupService {
     this.bucketName = `${this.configService.get('FIREBASE_PROJECT_ID')}-backups`;
   }
 
+  private getErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
+  }
+
   async createBackup(): Promise<BackupResult> {
     const backupId = `backup-${Date.now()}`;
     const timestamp = new Date().toISOString();
@@ -114,7 +118,7 @@ export class BackupService {
             backupId,
             timestamp: admin.firestore.FieldValue.serverTimestamp(),
             status: 'failed',
-            error: error.message,
+            error: this.getErrorMessage(error),
             environment: this.configService.get('NODE_ENV'),
           });
       } catch (metadataError) {
@@ -125,7 +129,7 @@ export class BackupService {
         success: false,
         backupId,
         timestamp,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         collections: [],
       };
     }
@@ -195,7 +199,7 @@ export class BackupService {
             backupId,
             restoreTimestamp: admin.firestore.FieldValue.serverTimestamp(),
             status: 'failed',
-            error: error.message,
+            error: this.getErrorMessage(error),
             environment: this.configService.get('NODE_ENV'),
           });
       } catch (metadataError) {
@@ -206,7 +210,7 @@ export class BackupService {
         success: false,
         backupId,
         timestamp,
-        error: error.message,
+        error: this.getErrorMessage(error),
         restoredCollections: [],
       };
     }
@@ -373,7 +377,7 @@ export class BackupService {
     } catch (error) {
       return {
         valid: false,
-        errors: [error.message],
+        errors: [this.getErrorMessage(error)],
         collections: {},
       };
     }
