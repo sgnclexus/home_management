@@ -1,0 +1,28 @@
+{
+  "payment": {
+    "dueReminder": "Reminder: Your payment of {{amount}} is due on {{dueDate}}",
+    "overdue": "Your payment of {{amount}} is overdue since {{dueDate}}",
+    "processed": "Your payment of {{amount}} has been processed successfully",
+    "failed": "Your payment of {{amount}} could not be processed. Please try again."
+  },
+  "reservation": {
+    "confirmed": "Your reservation for {{area}} on {{date}} has been confirmed",
+    "reminder": "Reminder: Your reservation for {{area}} is tomorrow at {{time}}",
+    "cancelled": "Your reservation for {{area}} on {{date}} has been cancelled",
+    "modified": "Your reservation for {{area}} has been modified"
+  },
+  "meeting": {
+    "scheduled": "New meeting scheduled: {{title}} on {{date}}",
+    "reminder": "Reminder: Meeting {{title}} in 1 hour",
+    "cancelled": "Meeting {{title}} on {{date}} has been cancelled",
+    "notesPublished": "Meeting notes for {{title}} are now available",
+    "voteStarted": "New vote available: {{question}}",
+    "voteEnding": "Vote {{question}} is ending soon",
+    "agreementPending": "New agreement requires your attention: {{title}}"
+  },
+  "system": {
+    "maintenanceScheduled": "Scheduled maintenance on {{date}} from {{startTime}} to {{endTime}}",
+    "serviceRestored": "Service has been restored",
+    "importantAnnouncement": "Important announcement: {{message}}"
+  }
+}

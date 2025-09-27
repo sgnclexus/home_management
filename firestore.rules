@@ -1,0 +1,123 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    function hasRole(role) {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role;
+    }
+    
+    function isAdmin() {
+      return hasRole('admin');
+    }
+    
+    function isVigilance() {
+      return hasRole('vigilance');
+    }
+    
+    function isResident() {
+      return hasRole('resident');
+    }
+    
+    function isSecurity() {
+      return hasRole('security');
+    }
+    
+    function canReadUserData(userId) {
+      return isOwner(userId) || isAdmin() || isVigilance();
+    }
+    
+    function canWriteUserData(userId) {
+      return isOwner(userId) || isAdmin();
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if canReadUserData(userId);
+      allow write: if canWriteUserData(userId);
+      allow create: if isAdmin();
+    }
+
+    // Payments collection
+    match /payments/{paymentId} {
+      allow read: if isAuthenticated() && 
+                     (isOwner(resource.data.userId) || isAdmin() || isVigilance());
+      allow create: if isAdmin();
+      allow update: if isAdmin() || (isOwner(resource.data.userId) && 
+                                   request.data.diff(resource.data).affectedKeys()
+                                   .hasOnly(['status', 'paidDate', 'paymentMethod', 'transactionId']));
+      allow delete: if isAdmin();
+    }
+
+    // Payment transaction logs collection
+    match /payment_transaction_logs/{logId} {
+      allow read: if isAdmin() || isVigilance();
+      allow write: if false; // Only server can write logs
+    }
+
+    // Audit logs collection
+    match /audit_logs/{logId} {
+      allow read: if isAdmin();
+      allow write: if false; // Only server can write logs
+    }
+
+    // Reservations collection
+    match /reservations/{reservationId} {
+      allow read: if isAuthenticated() && 
+                     (isOwner(resource.data.userId) || isAdmin() || isVigilance() || isSecurity());
+      allow create: if isAuthenticated() && isOwner(request.resource.data.userId);
+      allow update: if isAuthenticated() && 
+                       (isOwner(resource.data.userId) || isAdmin()) &&
+                       request.data.diff(resource.data).affectedKeys()
+                       .hasOnly(['status', 'notes', 'updatedAt']);
+      allow delete: if isOwner(resource.data.userId) || isAdmin();
+    }
+
+    // Common areas collection
+    match /common_areas/{areaId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // Meetings collection
+    match /meetings/{meetingId} {
+      allow read: if isAuthenticated();
+      allow create: if isAdmin();
+      allow update: if isAdmin() || 
+                       (isAuthenticated() && 
+                        request.data.diff(resource.data).affectedKeys()
+                        .hasOnly(['attendees', 'updatedAt']));
+      allow delete: if isAdmin();
+
+      // Votes subcollection
+      match /votes/{voteId} {
+        allow read: if isAuthenticated();
+        allow create: if isAdmin();
+        allow update: if isAuthenticated() && 
+                         request.data.diff(resource.data).affectedKeys()
+                         .hasOnly(['votes', 'results', 'updatedAt']);
+        allow delete: if isAdmin();
+      }
+    }
+
+    // Notifications collection
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && 
+                     (isOwner(resource.data.userId) || isAdmin());
+      allow create: if isAdmin();
+      allow update: if isOwner(resource.data.userId) && 
+                       request.data.diff(resource.data).affectedKeys()
+                       .hasOnly(['read', 'readAt']);
+      allow delete: if isOwner(resource.data.userId) || isAdmin();
+    }
+  }
+}

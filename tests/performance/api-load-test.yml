@@ -1,0 +1,170 @@
+config:
+  target: 'http://localhost:3001'
+  phases:
+    # Warm-up phase
+    - duration: 60
+      arrivalRate: 5
+      name: "Warm-up"
+    
+    # Ramp-up phase
+    - duration: 120
+      arrivalRate: 10
+      rampTo: 50
+      name: "Ramp-up load"
+    
+    # Sustained load phase
+    - duration: 300
+      arrivalRate: 50
+      name: "Sustained load"
+    
+    # Peak load phase
+    - duration: 60
+      arrivalRate: 100
+      name: "Peak load"
+    
+    # Cool-down phase
+    - duration: 60
+      arrivalRate: 10
+      name: "Cool-down"
+
+  defaults:
+    headers:
+      Content-Type: 'application/json'
+      Accept: 'application/json'
+
+  # Performance thresholds
+  ensure:
+    # 95% of requests should complete within 2 seconds
+    - p95: 2000
+    # 99% of requests should complete within 5 seconds
+    - p99: 5000
+    # Error rate should be less than 1%
+    - maxErrorRate: 1
+
+scenarios:
+  # Authentication endpoints
+  - name: "Authentication Flow"
+    weight: 20
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "test@example.com"
+            password: "password123"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+      
+      - get:
+          url: "/api/auth/profile"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+  # User management endpoints
+  - name: "User Management"
+    weight: 15
+    flow:
+      - get:
+          url: "/api/users"
+          headers:
+            Authorization: "Bearer mock-admin-token"
+      
+      - get:
+          url: "/api/users/{{ $randomString() }}"
+          headers:
+            Authorization: "Bearer mock-admin-token"
+
+  # Payment endpoints
+  - name: "Payment Operations"
+    weight: 25
+    flow:
+      - get:
+          url: "/api/payments"
+          headers:
+            Authorization: "Bearer mock-user-token"
+      
+      - post:
+          url: "/api/payments"
+          headers:
+            Authorization: "Bearer mock-user-token"
+          json:
+            amount: "{{ $randomInt(50, 500) }}"
+            currency: "USD"
+            description: "Monthly maintenance fee"
+      
+      - get:
+          url: "/api/payments/history"
+          headers:
+            Authorization: "Bearer mock-user-token"
+
+  # Reservation endpoints
+  - name: "Reservation Operations"
+    weight: 20
+    flow:
+      - get:
+          url: "/api/reservations/availability"
+          headers:
+            Authorization: "Bearer mock-user-token"
+          qs:
+            date: "{{ $moment().format('YYYY-MM-DD') }}"
+            areaId: "pool"
+      
+      - post:
+          url: "/api/reservations"
+          headers:
+            Authorization: "Bearer mock-user-token"
+          json:
+            areaId: "pool"
+            startTime: "{{ $moment().add(1, 'day').format() }}"
+            endTime: "{{ $moment().add(1, 'day').add(2, 'hours').format() }}"
+            notes: "Load test reservation"
+
+  # Meeting endpoints
+  - name: "Meeting Operations"
+    weight: 10
+    flow:
+      - get:
+          url: "/api/meetings"
+          headers:
+            Authorization: "Bearer mock-user-token"
+      
+      - get:
+          url: "/api/meetings/upcoming"
+          headers:
+            Authorization: "Bearer mock-user-token"
+
+  # Notification endpoints
+  - name: "Notification Operations"
+    weight: 10
+    flow:
+      - get:
+          url: "/api/notifications"
+          headers:
+            Authorization: "Bearer mock-user-token"
+      
+      - patch:
+          url: "/api/notifications/{{ $randomString() }}/read"
+          headers:
+            Authorization: "Bearer mock-user-token"
+
+# Custom functions for test data generation
+functions:
+  generateUserId:
+    - return: "user-{{ $randomString() }}"
+  
+  generatePaymentAmount:
+    - return: "{{ $randomInt(50, 500) }}"
+  
+  generateFutureDate:
+    - return: "{{ $moment().add($randomInt(1, 30), 'days').format() }}"
+
+# Metrics to collect
+metrics:
+  - name: "response_time"
+    unit: "ms"
+  - name: "error_rate"
+    unit: "percent"
+  - name: "requests_per_second"
+    unit: "rps"
+  - name: "concurrent_users"
+    unit: "users"

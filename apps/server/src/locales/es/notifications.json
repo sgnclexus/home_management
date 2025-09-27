@@ -1,0 +1,28 @@
+{
+  "payment": {
+    "dueReminder": "Recordatorio: Su pago de {{amount}} vence el {{dueDate}}",
+    "overdue": "Su pago de {{amount}} está vencido desde el {{dueDate}}",
+    "processed": "Su pago de {{amount}} ha sido procesado exitosamente",
+    "failed": "Su pago de {{amount}} no pudo ser procesado. Intente nuevamente."
+  },
+  "reservation": {
+    "confirmed": "Su reserva para {{area}} el {{date}} ha sido confirmada",
+    "reminder": "Recordatorio: Su reserva para {{area}} es mañana a las {{time}}",
+    "cancelled": "Su reserva para {{area}} el {{date}} ha sido cancelada",
+    "modified": "Su reserva para {{area}} ha sido modificada"
+  },
+  "meeting": {
+    "scheduled": "Nueva reunión programada: {{title}} el {{date}}",
+    "reminder": "Recordatorio: Reunión {{title}} en 1 hora",
+    "cancelled": "La reunión {{title}} del {{date}} ha sido cancelada",
+    "notesPublished": "Las notas de la reunión {{title}} están disponibles",
+    "voteStarted": "Nueva votación disponible: {{question}}",
+    "voteEnding": "La votación {{question}} termina pronto",
+    "agreementPending": "Nuevo acuerdo requiere su atención: {{title}}"
+  },
+  "system": {
+    "maintenanceScheduled": "Mantenimiento programado el {{date}} de {{startTime}} a {{endTime}}",
+    "serviceRestored": "El servicio ha sido restaurado",
+    "importantAnnouncement": "Anuncio importante: {{message}}"
+  }
+}

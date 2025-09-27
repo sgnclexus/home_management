@@ -1,0 +1,35 @@
+{
+  "user": {
+    "notFound": "User not found",
+    "alreadyExists": "User already exists",
+    "invalidCredentials": "Invalid credentials",
+    "insufficientPermissions": "Insufficient permissions",
+    "profileUpdateFailed": "Failed to update profile"
+  },
+  "payment": {
+    "notFound": "Payment not found",
+    "processingFailed": "Payment processing failed",
+    "invalidAmount": "Invalid amount",
+    "alreadyPaid": "Payment already processed",
+    "paymentMethodRequired": "Payment method required"
+  },
+  "reservation": {
+    "notFound": "Reservation not found",
+    "conflictingTime": "Conflicting time slot",
+    "areaNotAvailable": "Area not available",
+    "pastDate": "Cannot make reservations for past dates",
+    "maxReservationsExceeded": "Maximum reservations exceeded"
+  },
+  "meeting": {
+    "notFound": "Meeting not found",
+    "alreadyStarted": "Meeting already started",
+    "votingClosed": "Voting is closed",
+    "alreadyVoted": "Already voted in this poll"
+  },
+  "auth": {
+    "tokenExpired": "Token expired",
+    "tokenInvalid": "Invalid token",
+    "accessDenied": "Access denied",
+    "roleRequired": "Role required"
+  }
+}

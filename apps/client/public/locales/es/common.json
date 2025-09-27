@@ -1,0 +1,434 @@
+{
+  "welcome": "Bienvenido al Sistema de Gestión Residencial",
+  "description": "Plataforma integral para la administración de condominios",
+  "loading": "Cargando...",
+  "error": "Error",
+  "success": "Éxito",
+  "cancel": "Cancelar",
+  "save": "Guardar",
+  "edit": "Editar",
+  "delete": "Eliminar",
+  "confirm": "Confirmar",
+  "back": "Volver",
+  "next": "Siguiente",
+  "previous": "Anterior",
+  "search": "Buscar",
+  "filter": "Filtrar",
+  "sort": "Ordenar",
+  "actions": "Acciones",
+  "status": "Estado",
+  "date": "Fecha",
+  "time": "Hora",
+  "amount": "Monto",
+  "total": "Total",
+  "name": "Nombre",
+  "email": "Correo electrónico",
+  "phone": "Teléfono",
+  "address": "Dirección",
+  "apartment": "Apartamento",
+  "role": "Rol",
+  "app": {
+    "title": "Gestión Residencial",
+    "subtitle": "Sistema de Administración de Condominios"
+  },
+  "auth": {
+    "login": "Iniciar Sesión",
+    "register": "Registrarse",
+    "logout": "Cerrar Sesión",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "displayName": "Nombre Completo",
+    "emailPlaceholder": "Ingrese su correo electrónico",
+    "passwordPlaceholder": "Ingrese su contraseña",
+    "confirmPasswordPlaceholder": "Confirme su contraseña",
+    "displayNamePlaceholder": "Ingrese su nombre completo",
+    "passwordRequirements": "Mínimo 8 caracteres requeridos",
+    "forgotPassword": "¿Olvidó su contraseña?",
+    "resetPassword": "Restablecer Contraseña",
+    "resetPasswordDescription": "Ingrese su correo para recibir instrucciones de restablecimiento",
+    "backToLogin": "Volver al Inicio de Sesión",
+    "noAccount": "¿No tiene una cuenta?",
+    "hasAccount": "¿Ya tiene una cuenta?",
+    "loggingIn": "Iniciando sesión...",
+    "registering": "Creando cuenta...",
+    "loginError": "Error al iniciar sesión. Verifique sus credenciales.",
+    "registerError": "Error al registrarse. Intente nuevamente.",
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "passwordTooShort": "La contraseña debe tener al menos 8 caracteres"
+  },
+  "profile": {
+    "title": "Perfil de Usuario",
+    "displayName": "Nombre Completo",
+    "apartmentNumber": "Número de Apartamento",
+    "phoneNumber": "Número de Teléfono",
+    "preferredLanguage": "Idioma Preferido",
+    "uid": "ID de Usuario",
+    "apartmentPlaceholder": "ej., 101, A-205",
+    "phonePlaceholder": "ej., +1234567890",
+    "saving": "Guardando...",
+    "loadError": "Error al cargar el perfil",
+    "updateSuccess": "Perfil actualizado exitosamente",
+    "updateError": "Error al actualizar el perfil"
+  },
+  "dashboard": {
+    "welcome": "Bienvenido",
+    "profile": "Perfil",
+    "payments": "Pagos",
+    "reservations": "Reservas",
+    "userManagement": "Gestión de Usuarios",
+    "adminPayments": "Gestión de Pagos"
+  },
+  "admin": {
+    "users": {
+      "title": "Gestión de Usuarios",
+      "accessDenied": "Acceso denegado. Se requieren privilegios de administrador.",
+      "refresh": "Actualizar",
+      "searchPlaceholder": "Buscar por nombre o correo",
+      "filterByRole": "Filtrar por Rol",
+      "filterByStatus": "Filtrar por Estado",
+      "allRoles": "Todos los Roles",
+      "allStatuses": "Todos los Estados",
+      "user": "Usuario",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "activate": "Activar",
+      "deactivate": "Desactivar",
+      "showing": "Mostrando {{start}} a {{end}} de {{total}} resultados",
+      "loadError": "Error al cargar usuarios",
+      "roleUpdateSuccess": "Rol de usuario actualizado exitosamente",
+      "roleUpdateError": "Error al actualizar el rol del usuario",
+      "activateSuccess": "Usuario activado exitosamente",
+      "deactivateSuccess": "Usuario desactivado exitosamente",
+      "statusUpdateError": "Error al actualizar el estado del usuario"
+    }
+  },
+  "roles": {
+    "admin": "Administrador",
+    "vigilance": "Comité de Vigilancia",
+    "resident": "Residente",
+    "security": "Seguridad"
+  },
+  "languages": {
+    "spanish": "Español",
+    "english": "Inglés"
+  },
+  "payments": {
+    "dashboard": {
+      "title": "Panel de Pagos",
+      "description": "Ver y gestionar sus pagos de condominio"
+    },
+    "currentPayment": "Pago Pendiente Actual",
+    "noPendingPayments": "Sin Pagos Pendientes",
+    "allPaymentsCurrent": "¡Todos sus pagos están al día!",
+    "payNow": "Pagar Ahora",
+    "processing": "Procesando...",
+    "processPayment": "Procesar Pago",
+    "processError": "Error al procesar el pago. Intente nuevamente.",
+    "loadError": "Error al cargar los pagos. Intente nuevamente.",
+    "description": "Descripción",
+    "dueDate": "Fecha de Vencimiento",
+    "paidDate": "Fecha de Pago",
+    "currency": "Moneda",
+    "selectPaymentMethod": "Seleccionar Método de Pago",
+    "methods": {
+      "stripe": "Tarjeta de Crédito/Débito",
+      "paypal": "PayPal"
+    },
+    "stripe": {
+      "description": "Pague de forma segura con su tarjeta de crédito o débito",
+      "secureNote": "Su información de pago está encriptada y segura"
+    },
+    "paypal": {
+      "description": "Pague con su cuenta de PayPal",
+      "redirectNote": "Será redirigido a PayPal para completar su pago"
+    },
+    "status": {
+      "pending": "Pendiente",
+      "paid": "Pagado",
+      "overdue": "Vencido",
+      "cancelled": "Cancelado"
+    },
+    "filter": {
+      "allStatuses": "Todos los Estados"
+    },
+    "history": {
+      "title": "Historial de Pagos",
+      "noPayments": "No se encontraron pagos",
+      "noPaymentsDescription": "Aún no tiene registros de pagos.",
+      "noFilteredPayments": "No hay pagos que coincidan con sus filtros actuales"
+    },
+    "admin": {
+      "title": "Gestión de Pagos",
+      "description": "Gestionar pagos y cuotas de residentes",
+      "accessDenied": "Se requieren privilegios de administrador para gestionar pagos.",
+      "createPayment": "Crear Pago",
+      "updateStatus": "Actualizar Estado",
+      "resident": "Residente",
+      "selectResident": "Seleccionar Residente",
+      "selectResidentPlaceholder": "Elegir un residente...",
+      "descriptionPlaceholder": "ej., Cuota de mantenimiento mensual - Enero 2024",
+      "preview": "Vista Previa",
+      "creating": "Creando...",
+      "updating": "Actualizando...",
+      "createError": "Error al crear el pago. Intente nuevamente.",
+      "updateStatusError": "Error al actualizar el estado del pago. Intente nuevamente.",
+      "loadError": "Error al cargar los pagos. Intente nuevamente.",
+      "noPayments": "No se encontraron pagos",
+      "createFirstPayment": "Cree su primer pago para comenzar.",
+      "noFilteredPayments": "No hay pagos que coincidan con sus filtros",
+      "adjustFilters": "Intente ajustar sus criterios de búsqueda o filtro.",
+      "searchPlaceholder": "Buscar por nombre de residente, apartamento o descripción...",
+      "validation": {
+        "userRequired": "Por favor seleccione un residente",
+        "amountRequired": "Por favor ingrese un monto válido mayor a 0",
+        "descriptionRequired": "Por favor ingrese una descripción del pago"
+      },
+      "selectNewStatus": "Seleccionar Nuevo Estado",
+      "currentStatus": "Estado Actual",
+      "statusChangeWarning": "Está a punto de cambiar el estado de {{from}} a {{to}}. Esta acción no se puede deshacer.",
+      "statusDescriptions": {
+        "pending": "El pago está esperando ser completado por el residente",
+        "paid": "El pago ha sido completado exitosamente",
+        "overdue": "El pago está vencido y requiere atención inmediata",
+        "cancelled": "El pago ha sido cancelado y no será cobrado"
+      }
+    }
+  },
+  "reservations": {
+    "dashboard": {
+      "title": "Reservas de Áreas Comunes",
+      "description": "Reserve y gestione el uso de áreas comunes del condominio"
+    },
+    "selectArea": "Seleccionar Área Común",
+    "selectDate": "Seleccionar Fecha",
+    "selectTimeSlot": "Seleccionar Horario",
+    "bookArea": "Reservar Área",
+    "myReservations": "Mis Reservas",
+    "capacity": "Capacidad",
+    "hours": "Horario",
+    "people": "personas",
+    "noAvailableSlots": "No hay horarios disponibles para esta fecha",
+    "confirmBooking": "Confirmar Reserva",
+    "bookingSummary": "Resumen de la Reserva",
+    "area": "Área",
+    "date": "Fecha",
+    "time": "Horario",
+    "dateTime": "Fecha y Hora",
+    "areaRules": "Reglas del Área",
+    "notes": "Notas",
+    "optional": "opcional",
+    "notesPlaceholder": "Agregue cualquier nota o comentario especial para su reserva...",
+    "characters": "caracteres",
+    "booking": "Reservando...",
+    "confirmReservation": "Confirmar Reserva",
+    "bookingSuccess": "Reserva creada exitosamente",
+    "bookingError": "Error al crear la reserva. Intente nuevamente.",
+    "loadError": "Error al cargar las áreas comunes. Intente nuevamente.",
+    "noReservations": "No tiene reservas activas",
+    "makeFirstReservation": "Hacer Primera Reserva",
+    "cancel": "Cancelar",
+    "cancelConfirmation": "¿Está seguro de que desea cancelar esta reserva?",
+    "cancelSuccess": "Reserva cancelada exitosamente",
+    "cancelError": "Error al cancelar la reserva. Intente nuevamente.",
+    "status": {
+      "confirmed": "Confirmada",
+      "cancelled": "Cancelada",
+      "completed": "Completada"
+    }
+  },
+  "meetings": {
+    "dashboard": {
+      "title": "Panel de Reuniones"
+    },
+    "create": {
+      "title": "Crear Reunión",
+      "button": "Crear Reunión",
+      "submit": "Crear Reunión",
+      "fields": {
+        "title": "Título de la Reunión",
+        "description": "Descripción",
+        "scheduledDate": "Fecha y Hora Programada",
+        "duration": "Duración",
+        "location": "Ubicación",
+        "agenda": "Agenda",
+        "attendees": "Asistentes"
+      },
+      "placeholders": {
+        "title": "Ingrese el título de la reunión",
+        "description": "Ingrese la descripción de la reunión",
+        "location": "Ingrese la ubicación de la reunión",
+        "agendaItem": "Ingrese el punto de la agenda"
+      },
+      "addAgendaItem": "Agregar Punto de Agenda",
+      "selectAllResidents": "Seleccionar Todos los Residentes",
+      "validation": {
+        "titleRequired": "El título de la reunión es requerido",
+        "descriptionRequired": "La descripción de la reunión es requerida",
+        "attendeesRequired": "Se requiere al menos un asistente",
+        "agendaRequired": "Se requiere al menos un punto de agenda"
+      },
+      "error": "Error al crear la reunión"
+    },
+    "stats": {
+      "upcoming": "Próximas",
+      "activeVotes": "Votaciones Activas",
+      "activeAgreements": "Acuerdos Activos",
+      "totalMeetings": "Total de Reuniones"
+    },
+    "tabs": {
+      "meetings": "Reuniones",
+      "votes": "Votaciones",
+      "agreements": "Acuerdos"
+    },
+    "upcoming": {
+      "title": "Próximas Reuniones"
+    },
+    "empty": {
+      "title": "No hay reuniones próximas",
+      "description": "No hay reuniones programadas."
+    },
+    "status": {
+      "scheduled": "Programada",
+      "in_progress": "En Progreso",
+      "completed": "Completada",
+      "cancelled": "Cancelada"
+    },
+    "votes": {
+      "active": "Votaciones Activas",
+      "options": "opciones",
+      "anonymous": "Anónima",
+      "multipleChoice": "Opción Múltiple",
+      "vote": "Votar",
+      "submit": "Enviar Voto",
+      "submitted": "Voto enviado exitosamente",
+      "closed": "Esta votación ha sido cerrada",
+      "closedAt": "Cerrada el {{date}}",
+      "votes": "votos",
+      "totalVotes": "Total de Votos",
+      "participation": "Participación",
+      "showResults": "Mostrar Resultados",
+      "hideResults": "Ocultar Resultados",
+      "validation": {
+        "selectOption": "Por favor seleccione una opción"
+      },
+      "error": {
+        "submit": "Error al enviar el voto"
+      },
+      "status": {
+        "active": "Activa",
+        "closed": "Cerrada",
+        "cancelled": "Cancelada"
+      },
+      "empty": {
+        "title": "No hay votaciones activas",
+        "description": "No hay votaciones disponibles en este momento."
+      }
+    },
+    "agreements": {
+      "active": "Acuerdos Activos",
+      "approved": "aprobado",
+      "rejected": "rechazado",
+      "approve": "Aprobar",
+      "reject": "Rechazar",
+      "youApproved": "Usted Aprobó",
+      "youRejected": "Usted Rechazó",
+      "pendingYourResponse": "Pendiente de su respuesta",
+      "content": "Contenido del Acuerdo",
+      "comments": "Comentarios",
+      "addComment": "Agregar Comentario",
+      "noComments": "Aún no hay comentarios",
+      "noCommentsDescription": "Sea el primero en comentar sobre este acuerdo.",
+      "effectiveDate": "Fecha de Vigencia",
+      "expirationDate": "Fecha de Expiración",
+      "status": {
+        "draft": "Borrador",
+        "active": "Activo",
+        "expired": "Expirado",
+        "cancelled": "Cancelado"
+      },
+      "error": {
+        "approve": "Error al aprobar el acuerdo",
+        "reject": "Error al rechazar el acuerdo",
+        "comment": "Error al agregar comentario"
+      },
+      "empty": {
+        "title": "No hay acuerdos activos",
+        "description": "No hay acuerdos que requieran su atención."
+      }
+    },
+    "error": "Error al cargar las reuniones"
+  },
+  "retry": "Reintentar",
+  "view": "Ver",
+  "show": "Mostrar",
+  "hide": "Ocultar",
+  "selected": "seleccionado",
+  "minutes": "minutos",
+  "hour": "hora",
+  "hours": "horas",
+  "creating": "Creando...",
+  "adding": "Agregando...",
+  "submitting": "Enviando...",
+  "created": "Creado",
+  "close": "Cerrar",
+  "notifications": {
+    "title": "Notificaciones",
+    "empty": "No hay notificaciones",
+    "all": "Todas",
+    "unread": "No leídas",
+    "markAllRead": "Marcar todas como leídas",
+    "markRead": "Marcar como leída",
+    "justNow": "Ahora mismo",
+    "hoursAgo": "hace {{hours}} horas",
+    "stats": "{{total}} total, {{unread}} no leídas",
+    "permission": {
+      "title": "Habilitar Notificaciones",
+      "description": "Reciba notificaciones sobre actualizaciones importantes y recordatorios",
+      "allow": "Permitir",
+      "dismiss": "Descartar"
+    },
+    "preferences": {
+      "title": "Preferencias de Notificaciones",
+      "loadError": "Error al cargar las preferencias",
+      "resetDefaults": "Restablecer valores predeterminados",
+      "globalChannels": "Configuración Global de Canales",
+      "quietHours": "Horas de Silencio",
+      "from": "Desde",
+      "to": "Hasta",
+      "clearQuietHours": "Limpiar",
+      "quietHoursDescription": "Las notificaciones se retrasarán durante las horas de silencio",
+      "typeSettings": "Configuración por Tipo de Notificación",
+      "saving": "Guardando preferencias..."
+    },
+    "priority": {
+      "low": "Baja",
+      "normal": "Normal",
+      "high": "Alta",
+      "urgent": "Urgente"
+    },
+    "channels": {
+      "push": "Push",
+      "email": "Correo",
+      "sms": "SMS",
+      "in_app": "En la app"
+    },
+    "types": {
+      "reservation_confirmation": "Reserva Confirmada",
+      "reservation_update": "Reserva Actualizada",
+      "reservation_cancellation": "Reserva Cancelada",
+      "reservation_reminder": "Recordatorio de Reserva",
+      "meeting_scheduled": "Reunión Programada",
+      "meeting_updated": "Reunión Actualizada",
+      "meeting_cancelled": "Reunión Cancelada",
+      "meeting_rescheduled": "Reunión Reprogramada",
+      "meeting_notes_published": "Notas de Reunión Publicadas",
+      "vote_created": "Nueva Votación",
+      "vote_closed": "Votación Cerrada",
+      "agreement_activated": "Acuerdo Activado",
+      "payment_due": "Pago Pendiente",
+      "payment_overdue": "Pago Vencido",
+      "payment_confirmed": "Pago Confirmado",
+      "system_announcement": "Anuncio del Sistema"
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "user": {
+    "notFound": "Usuario no encontrado",
+    "alreadyExists": "El usuario ya existe",
+    "invalidCredentials": "Credenciales inválidas",
+    "insufficientPermissions": "Permisos insuficientes",
+    "profileUpdateFailed": "Error al actualizar el perfil"
+  },
+  "payment": {
+    "notFound": "Pago no encontrado",
+    "processingFailed": "Error al procesar el pago",
+    "invalidAmount": "Monto inválido",
+    "alreadyPaid": "El pago ya fue procesado",
+    "paymentMethodRequired": "Método de pago requerido"
+  },
+  "reservation": {
+    "notFound": "Reserva no encontrada",
+    "conflictingTime": "Horario en conflicto",
+    "areaNotAvailable": "Área no disponible",
+    "pastDate": "No se pueden hacer reservas en fechas pasadas",
+    "maxReservationsExceeded": "Máximo de reservas excedido"
+  },
+  "meeting": {
+    "notFound": "Reunión no encontrada",
+    "alreadyStarted": "La reunión ya comenzó",
+    "votingClosed": "La votación está cerrada",
+    "alreadyVoted": "Ya ha votado en esta votación"
+  },
+  "auth": {
+    "tokenExpired": "Token expirado",
+    "tokenInvalid": "Token inválido",
+    "accessDenied": "Acceso denegado",
+    "roleRequired": "Rol requerido"
+  }
+}

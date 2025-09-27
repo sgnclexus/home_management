@@ -1,0 +1,402 @@
+name: Test and Quality Assurance
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  # Backend Tests
+  backend-tests:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    
+    services:
+      # Firebase Emulator for integration tests
+      firebase-emulator:
+        image: firebase/firebase-tools:latest
+        ports:
+          - 9099:9099  # Auth
+          - 8080:8080  # Firestore
+          - 5001:5001  # Functions
+        options: >-
+          --health-cmd "curl -f http://localhost:4400/health || exit 1"
+          --health-interval 30s
+          --health-timeout 10s
+          --health-retries 3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install server dependencies
+        run: npm ci --prefix apps/server
+
+      - name: Run linting
+        run: npm run lint --prefix apps/server
+
+      - name: Run unit tests
+        run: npm run test:unit --prefix apps/server
+        env:
+          NODE_ENV: test
+          FIREBASE_AUTH_EMULATOR_HOST: localhost:9099
+          FIRESTORE_EMULATOR_HOST: localhost:8080
+
+      - name: Run integration tests
+        run: npm run test:integration --prefix apps/server
+        env:
+          NODE_ENV: test
+          FIREBASE_AUTH_EMULATOR_HOST: localhost:9099
+          FIRESTORE_EMULATOR_HOST: localhost:8080
+
+      - name: Generate coverage report
+        run: npm run test:coverage --prefix apps/server
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./apps/server/coverage/lcov.info
+          flags: backend
+          name: backend-coverage
+
+      - name: Check coverage threshold
+        run: |
+          COVERAGE=$(npm run test:coverage --prefix apps/server --silent | grep -o 'All files.*[0-9]\+\.[0-9]\+' | grep -o '[0-9]\+\.[0-9]\+' | tail -1)
+          if (( $(echo "$COVERAGE < 80" | bc -l) )); then
+            echo "Coverage $COVERAGE% is below 80% threshold"
+            exit 1
+          fi
+          echo "Coverage $COVERAGE% meets threshold"
+
+  # Frontend Tests
+  frontend-tests:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install client dependencies
+        run: npm ci --prefix apps/client
+
+      - name: Run linting
+        run: npm run lint --prefix apps/client
+
+      - name: Run type checking
+        run: npm run type-check --prefix apps/client
+
+      - name: Run unit tests
+        run: npm run test:unit --prefix apps/client
+
+      - name: Run component tests
+        run: npm run test:components --prefix apps/client
+
+      - name: Generate coverage report
+        run: npm run test:coverage --prefix apps/client
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./apps/client/coverage/lcov.info
+          flags: frontend
+          name: frontend-coverage
+
+  # End-to-End Tests
+  e2e-tests:
+    name: End-to-End Tests
+    runs-on: ubuntu-latest
+    needs: [backend-tests, frontend-tests]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+
+      - name: Start Firebase Emulators
+        run: |
+          npm install -g firebase-tools
+          firebase emulators:start --only auth,firestore,functions &
+          sleep 10
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+      - name: Build applications
+        run: |
+          npm run build --prefix apps/server
+          npm run build --prefix apps/client
+
+      - name: Start applications
+        run: |
+          npm run start:prod --prefix apps/server &
+          npm run start --prefix apps/client &
+          sleep 30
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+        env:
+          NODE_ENV: test
+          FIREBASE_AUTH_EMULATOR_HOST: localhost:9099
+          FIRESTORE_EMULATOR_HOST: localhost:8080
+
+      - name: Upload E2E test results
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: e2e-test-results
+          path: |
+            test-results/
+            playwright-report/
+
+  # Security and Quality Checks
+  security-quality:
+    name: Security and Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run security audit
+        run: |
+          npm audit --audit-level high
+          npm audit --prefix apps/server --audit-level high
+          npm audit --prefix apps/client --audit-level high
+
+      - name: Run dependency check
+        run: |
+          npx depcheck apps/server
+          npx depcheck apps/client
+
+      - name: Run bundle analysis
+        run: |
+          npm run analyze --prefix apps/client
+
+      - name: Check bundle size
+        run: |
+          BUNDLE_SIZE=$(npm run build --prefix apps/client --silent | grep -o 'First Load JS.*[0-9]\+ kB' | grep -o '[0-9]\+' | head -1)
+          if [ "$BUNDLE_SIZE" -gt 500 ]; then
+            echo "Bundle size ${BUNDLE_SIZE}kB exceeds 500kB limit"
+            exit 1
+          fi
+          echo "Bundle size ${BUNDLE_SIZE}kB is within limits"
+
+  # Performance Tests
+  performance-tests:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    needs: [backend-tests, frontend-tests]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Artillery
+        run: npm install -g artillery
+
+      - name: Start applications
+        run: |
+          npm run build --prefix apps/server
+          npm run build --prefix apps/client
+          npm run start:prod --prefix apps/server &
+          npm run start --prefix apps/client &
+          sleep 30
+
+      - name: Run API performance tests
+        run: artillery run tests/performance/api-load-test.yml
+
+      - name: Run Lighthouse CI
+        run: |
+          npm install -g @lhci/cli
+          lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Upload performance results
+        uses: actions/upload-artifact@v3
+        with:
+          name: performance-results
+          path: |
+            artillery-report.html
+            .lighthouseci/
+
+  # Accessibility Tests
+  accessibility-tests:
+    name: Accessibility Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build client
+        run: npm run build --prefix apps/client
+
+      - name: Start client
+        run: |
+          npm run start --prefix apps/client &
+          sleep 30
+
+      - name: Run axe accessibility tests
+        run: npm run test:a11y --prefix apps/client
+
+      - name: Upload accessibility results
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: accessibility-results
+          path: accessibility-report.html
+
+  # Code Quality Analysis
+  code-quality:
+    name: Code Quality Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for better analysis
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Run CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          languages: javascript, typescript
+
+  # Deployment Readiness Check
+  deployment-readiness:
+    name: Deployment Readiness Check
+    runs-on: ubuntu-latest
+    needs: [backend-tests, frontend-tests, e2e-tests, security-quality, performance-tests, accessibility-tests]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build applications
+        run: |
+          npm run build --prefix apps/server
+          npm run build --prefix apps/client
+
+      - name: Run deployment checks
+        run: |
+          # Check environment variables
+          npm run check:env --prefix apps/server
+          npm run check:env --prefix apps/client
+          
+          # Check build artifacts
+          test -d apps/server/dist
+          test -d apps/client/.next
+          
+          # Check configuration files
+          test -f apps/server/package.json
+          test -f apps/client/package.json
+
+      - name: Create deployment artifact
+        run: |
+          tar -czf deployment-artifact.tar.gz \
+            apps/server/dist \
+            apps/server/package.json \
+            apps/server/package-lock.json \
+            apps/client/.next \
+            apps/client/package.json \
+            apps/client/package-lock.json \
+            libs/
+
+      - name: Upload deployment artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: deployment-artifact
+          path: deployment-artifact.tar.gz
+          retention-days: 30
+
+      - name: Notify deployment readiness
+        run: |
+          echo "✅ All tests passed!"
+          echo "✅ Security checks passed!"
+          echo "✅ Performance tests passed!"
+          echo "✅ Accessibility tests passed!"
+          echo "✅ Code quality checks passed!"
+          echo "🚀 Application is ready for deployment!"

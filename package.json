@@ -1,0 +1,51 @@
+{
+  "name": "home-management-app",
+  "version": "1.0.0",
+  "description": "Condominium management system with Next.js frontend and NestJS backend",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "libs/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
+    "dev:client": "npm run dev --workspace=apps/client",
+    "dev:server": "npm run dev --workspace=apps/server",
+    "build": "npm run build --workspaces",
+    "build:client": "npm run build --workspace=apps/client",
+    "build:server": "npm run build --workspace=apps/server",
+    "test": "npm run test --workspaces",
+    "test:ci": "npm run test --workspaces -- --ci --coverage --watchAll=false",
+    "test:integration": "npm run test:integration --workspace=apps/server",
+    "test:staging": "echo 'Running staging tests...' && npm run test:e2e --workspace=apps/client",
+    "lint": "npm run lint --workspaces",
+    "type-check": "npm run type-check --workspaces",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "deploy": "./scripts/deploy.sh",
+    "deploy:production": "./scripts/deploy.sh production all",
+    "deploy:staging": "./scripts/deploy.sh staging all",
+    "deploy:frontend": "./scripts/deploy-frontend.sh",
+    "deploy:backend": "./scripts/deploy-backend.sh",
+    "firebase:emulators": "firebase emulators:start",
+    "firebase:deploy": "firebase deploy",
+    "vercel:deploy": "vercel --prod",
+    "setup:env": "echo 'Copy .env.example files and configure your environment variables'",
+    "setup:firebase": "firebase login && firebase init",
+    "setup:vercel": "vercel login && vercel link"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "concurrently": "^8.2.0",
+    "eslint": "^8.45.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.1.6"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

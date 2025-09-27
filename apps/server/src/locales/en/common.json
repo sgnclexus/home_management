@@ -1,0 +1,13 @@
+{
+  "success": "Success",
+  "error": "Error",
+  "notFound": "Not found",
+  "unauthorized": "Unauthorized",
+  "forbidden": "Forbidden",
+  "badRequest": "Bad request",
+  "internalError": "Internal server error",
+  "validationError": "Validation error",
+  "created": "Created successfully",
+  "updated": "Updated successfully",
+  "deleted": "Deleted successfully"
+}

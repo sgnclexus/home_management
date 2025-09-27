@@ -1,0 +1,498 @@
+{
+  "welcome": "Welcome to the Home Management System",
+  "description": "Comprehensive platform for condominium administration",
+  "loading": "Loading...",
+  "error": "Error",
+  "success": "Success",
+  "cancel": "Cancel",
+  "save": "Save",
+  "edit": "Edit",
+  "delete": "Delete",
+  "confirm": "Confirm",
+  "back": "Back",
+  "next": "Next",
+  "previous": "Previous",
+  "search": "Search",
+  "filter": "Filter",
+  "sort": "Sort",
+  "actions": "Actions",
+  "status": "Status",
+  "date": "Date",
+  "time": "Time",
+  "amount": "Amount",
+  "total": "Total",
+  "name": "Name",
+  "email": "Email",
+  "phone": "Phone",
+  "address": "Address",
+  "apartment": "Apartment",
+  "role": "Role",
+  "app": {
+    "title": "Home Management",
+    "subtitle": "Condominium Administration System",
+    "name": "Home Management"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "payments": "Payments",
+    "reservations": "Reservations",
+    "meetings": "Meetings",
+    "admin": "Administration",
+    "back": "Go back",
+    "menu": "Open menu",
+    "close": "Close menu"
+  },
+  "pwa": {
+    "installPrompt": {
+      "title": "Install Home Management App",
+      "description": "Install our app for a better experience with offline access and push notifications.",
+      "install": "Install",
+      "dismiss": "Not now"
+    },
+    "updatePrompt": {
+      "title": "App Update Available",
+      "description": "A new version of the app is available with improvements and bug fixes.",
+      "update": "Update Now",
+      "updating": "Updating..."
+    },
+    "networkStatus": {
+      "offline": "You are currently offline. Some features may be limited.",
+      "online": "Connection restored. All features are available."
+    },
+    "pushNotifications": {
+      "title": "Push Notifications",
+      "description": "Get notified about important updates, payment reminders, and meeting announcements.",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "enable": "Enable Notifications",
+      "enabling": "Enabling...",
+      "notSupported": "Push notifications are not supported in this browser.",
+      "permissionDenied": "Notifications are blocked. Please enable them in your browser settings.",
+      "subscribed": "You will receive notifications for important updates and reminders."
+    }
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "displayName": "Full Name",
+    "emailPlaceholder": "Enter your email",
+    "passwordPlaceholder": "Enter your password",
+    "confirmPasswordPlaceholder": "Confirm your password",
+    "displayNamePlaceholder": "Enter your full name",
+    "passwordRequirements": "At least 8 characters required",
+    "forgotPassword": "Forgot your password?",
+    "resetPassword": "Reset Password",
+    "resetPasswordDescription": "Enter your email to receive password reset instructions",
+    "backToLogin": "Back to Login",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "loggingIn": "Logging in...",
+    "registering": "Creating account...",
+    "loginError": "Login failed. Please check your credentials.",
+    "registerError": "Registration failed. Please try again.",
+    "passwordMismatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 8 characters long"
+  },
+  "profile": {
+    "title": "User Profile",
+    "displayName": "Full Name",
+    "apartmentNumber": "Apartment Number",
+    "phoneNumber": "Phone Number",
+    "preferredLanguage": "Preferred Language",
+    "uid": "User ID",
+    "apartmentPlaceholder": "e.g., 101, A-205",
+    "phonePlaceholder": "e.g., +1234567890",
+    "saving": "Saving...",
+    "loadError": "Failed to load profile",
+    "updateSuccess": "Profile updated successfully",
+    "updateError": "Failed to update profile"
+  },
+  "dashboard": {
+    "welcome": "Welcome",
+    "profile": "Profile",
+    "payments": "Payments",
+    "reservations": "Reservations",
+    "userManagement": "User Management",
+    "adminPayments": "Payment Management"
+  },
+  "admin": {
+    "users": {
+      "title": "User Management",
+      "accessDenied": "Access denied. Admin privileges required.",
+      "refresh": "Refresh",
+      "searchPlaceholder": "Search by name or email",
+      "filterByRole": "Filter by Role",
+      "filterByStatus": "Filter by Status",
+      "allRoles": "All Roles",
+      "allStatuses": "All Statuses",
+      "user": "User",
+      "active": "Active",
+      "inactive": "Inactive",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "showing": "Showing {{start}} to {{end}} of {{total}} results",
+      "loadError": "Failed to load users",
+      "roleUpdateSuccess": "User role updated successfully",
+      "roleUpdateError": "Failed to update user role",
+      "activateSuccess": "User activated successfully",
+      "deactivateSuccess": "User deactivated successfully",
+      "statusUpdateError": "Failed to update user status"
+    }
+  },
+  "roles": {
+    "admin": "Administrator",
+    "vigilance": "Vigilance Committee",
+    "resident": "Resident",
+    "security": "Security"
+  },
+  "languages": {
+    "spanish": "Spanish",
+    "english": "English"
+  },
+  "payments": {
+    "dashboard": {
+      "title": "Payment Dashboard",
+      "description": "View and manage your condominium payments"
+    },
+    "currentPayment": "Current Payment Due",
+    "noPendingPayments": "No Pending Payments",
+    "allPaymentsCurrent": "All your payments are up to date!",
+    "payNow": "Pay Now",
+    "processing": "Processing...",
+    "processPayment": "Process Payment",
+    "processError": "Payment processing failed. Please try again.",
+    "loadError": "Failed to load payments. Please try again.",
+    "description": "Description",
+    "dueDate": "Due Date",
+    "paidDate": "Paid Date",
+    "currency": "Currency",
+    "selectPaymentMethod": "Select Payment Method",
+    "methods": {
+      "stripe": "Credit/Debit Card",
+      "paypal": "PayPal"
+    },
+    "stripe": {
+      "description": "Pay securely with your credit or debit card",
+      "secureNote": "Your payment information is encrypted and secure"
+    },
+    "paypal": {
+      "description": "Pay with your PayPal account",
+      "redirectNote": "You will be redirected to PayPal to complete your payment"
+    },
+    "status": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "overdue": "Overdue",
+      "cancelled": "Cancelled"
+    },
+    "filter": {
+      "allStatuses": "All Statuses"
+    },
+    "history": {
+      "title": "Payment History",
+      "noPayments": "No payments found",
+      "noPaymentsDescription": "You don't have any payment records yet.",
+      "noFilteredPayments": "No payments match your current filters"
+    },
+    "admin": {
+      "title": "Payment Management",
+      "description": "Manage resident payments and fees",
+      "accessDenied": "Administrator privileges required to manage payments.",
+      "createPayment": "Create Payment",
+      "updateStatus": "Update Status",
+      "resident": "Resident",
+      "selectResident": "Select Resident",
+      "selectResidentPlaceholder": "Choose a resident...",
+      "descriptionPlaceholder": "e.g., Monthly maintenance fee - January 2024",
+      "preview": "Preview",
+      "creating": "Creating...",
+      "updating": "Updating...",
+      "createError": "Failed to create payment. Please try again.",
+      "updateStatusError": "Failed to update payment status. Please try again.",
+      "loadError": "Failed to load payments. Please try again.",
+      "noPayments": "No payments found",
+      "createFirstPayment": "Create your first payment to get started.",
+      "noFilteredPayments": "No payments match your filters",
+      "adjustFilters": "Try adjusting your search or filter criteria.",
+      "searchPlaceholder": "Search by resident name, apartment, or description...",
+      "validation": {
+        "userRequired": "Please select a resident",
+        "amountRequired": "Please enter a valid amount greater than 0",
+        "descriptionRequired": "Please enter a payment description"
+      },
+      "selectNewStatus": "Select New Status",
+      "currentStatus": "Current Status",
+      "statusChangeWarning": "You are about to change the status from {{from}} to {{to}}. This action cannot be undone.",
+      "statusDescriptions": {
+        "pending": "Payment is awaiting completion by the resident",
+        "paid": "Payment has been successfully completed",
+        "overdue": "Payment is past due and requires immediate attention",
+        "cancelled": "Payment has been cancelled and will not be collected"
+      }
+    }
+  },
+  "reservations": {
+    "dashboard": {
+      "title": "Common Area Reservations",
+      "description": "Reserve and manage common area usage in the condominium"
+    },
+    "selectArea": "Select Common Area",
+    "selectDate": "Select Date",
+    "selectTimeSlot": "Select Time Slot",
+    "bookArea": "Book Area",
+    "myReservations": "My Reservations",
+    "capacity": "Capacity",
+    "hours": "Hours",
+    "people": "people",
+    "noAvailableSlots": "No available time slots for this date",
+    "confirmBooking": "Confirm Booking",
+    "bookingSummary": "Booking Summary",
+    "area": "Area",
+    "date": "Date",
+    "time": "Time",
+    "dateTime": "Date & Time",
+    "areaRules": "Area Rules",
+    "notes": "Notes",
+    "optional": "optional",
+    "notesPlaceholder": "Add any special notes or comments for your reservation...",
+    "characters": "characters",
+    "booking": "Booking...",
+    "confirmReservation": "Confirm Reservation",
+    "bookingSuccess": "Reservation created successfully",
+    "bookingError": "Error creating reservation. Please try again.",
+    "loadError": "Error loading common areas. Please try again.",
+    "noReservations": "You have no active reservations",
+    "makeFirstReservation": "Make First Reservation",
+    "cancel": "Cancel",
+    "cancelConfirmation": "Are you sure you want to cancel this reservation?",
+    "cancelSuccess": "Reservation cancelled successfully",
+    "cancelError": "Error cancelling reservation. Please try again.",
+    "status": {
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled",
+      "completed": "Completed"
+    }
+  },
+  "meetings": {
+    "dashboard": {
+      "title": "Meeting Dashboard"
+    },
+    "create": {
+      "title": "Create Meeting",
+      "button": "Create Meeting",
+      "submit": "Create Meeting",
+      "fields": {
+        "title": "Meeting Title",
+        "description": "Description",
+        "scheduledDate": "Scheduled Date & Time",
+        "duration": "Duration",
+        "location": "Location",
+        "agenda": "Agenda",
+        "attendees": "Attendees"
+      },
+      "placeholders": {
+        "title": "Enter meeting title",
+        "description": "Enter meeting description",
+        "location": "Enter meeting location",
+        "agendaItem": "Enter agenda item"
+      },
+      "addAgendaItem": "Add Agenda Item",
+      "selectAllResidents": "Select All Residents",
+      "validation": {
+        "titleRequired": "Meeting title is required",
+        "descriptionRequired": "Meeting description is required",
+        "attendeesRequired": "At least one attendee is required",
+        "agendaRequired": "At least one agenda item is required"
+      },
+      "error": "Failed to create meeting"
+    },
+    "stats": {
+      "upcoming": "Upcoming",
+      "activeVotes": "Active Votes",
+      "activeAgreements": "Active Agreements",
+      "totalMeetings": "Total Meetings"
+    },
+    "tabs": {
+      "meetings": "Meetings",
+      "votes": "Votes",
+      "agreements": "Agreements"
+    },
+    "upcoming": {
+      "title": "Upcoming Meetings"
+    },
+    "empty": {
+      "title": "No upcoming meetings",
+      "description": "There are no meetings scheduled."
+    },
+    "status": {
+      "scheduled": "Scheduled",
+      "in_progress": "In Progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "votes": {
+      "active": "Active Votes",
+      "options": "options",
+      "anonymous": "Anonymous",
+      "multipleChoice": "Multiple Choice",
+      "vote": "Vote",
+      "submit": "Submit Vote",
+      "submitted": "Vote submitted successfully",
+      "closed": "This vote has been closed",
+      "closedAt": "Closed at {{date}}",
+      "votes": "votes",
+      "totalVotes": "Total Votes",
+      "participation": "Participation",
+      "showResults": "Show Results",
+      "hideResults": "Hide Results",
+      "validation": {
+        "selectOption": "Please select an option"
+      },
+      "error": {
+        "submit": "Failed to submit vote"
+      },
+      "status": {
+        "active": "Active",
+        "closed": "Closed",
+        "cancelled": "Cancelled"
+      },
+      "empty": {
+        "title": "No active votes",
+        "description": "There are no votes available at this time."
+      }
+    },
+    "agreements": {
+      "active": "Active Agreements",
+      "approved": "approved",
+      "rejected": "rejected",
+      "approve": "Approve",
+      "reject": "Reject",
+      "youApproved": "You Approved",
+      "youRejected": "You Rejected",
+      "pendingYourResponse": "Pending your response",
+      "content": "Agreement Content",
+      "comments": "Comments",
+      "addComment": "Add Comment",
+      "noComments": "No comments yet",
+      "noCommentsDescription": "Be the first to comment on this agreement.",
+      "effectiveDate": "Effective Date",
+      "expirationDate": "Expiration Date",
+      "status": {
+        "draft": "Draft",
+        "active": "Active",
+        "expired": "Expired",
+        "cancelled": "Cancelled"
+      },
+      "error": {
+        "approve": "Failed to approve agreement",
+        "reject": "Failed to reject agreement",
+        "comment": "Failed to add comment"
+      },
+      "empty": {
+        "title": "No active agreements",
+        "description": "There are no agreements requiring your attention."
+      }
+    },
+    "error": "Error loading meetings"
+  },
+  "retry": "Retry",
+  "view": "View",
+  "show": "Show",
+  "hide": "Hide",
+  "selected": "selected",
+  "minutes": "minutes",
+  "hour": "hour",
+  "hours": "hours",
+  "creating": "Creating...",
+  "adding": "Adding...",
+  "submitting": "Submitting...",
+  "created": "Created",
+  "close": "Close",
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications",
+    "all": "All",
+    "unread": "Unread",
+    "markAllRead": "Mark all as read",
+    "markRead": "Mark as read",
+    "justNow": "Just now",
+    "hoursAgo": "{{hours}} hours ago",
+    "stats": "{{total}} total, {{unread}} unread",
+    "permission": {
+      "title": "Enable Notifications",
+      "description": "Get notified about important updates and reminders",
+      "allow": "Allow",
+      "dismiss": "Dismiss"
+    },
+    "preferences": {
+      "title": "Notification Preferences",
+      "loadError": "Failed to load preferences",
+      "resetDefaults": "Reset to defaults",
+      "globalChannels": "Global Channel Settings",
+      "quietHours": "Quiet Hours",
+      "from": "From",
+      "to": "To",
+      "clearQuietHours": "Clear",
+      "quietHoursDescription": "Notifications will be delayed during quiet hours",
+      "typeSettings": "Notification Type Settings",
+      "saving": "Saving preferences..."
+    },
+    "priority": {
+      "low": "Low",
+      "normal": "Normal",
+      "high": "High",
+      "urgent": "Urgent"
+    },
+    "channels": {
+      "push": "Push",
+      "email": "Email",
+      "sms": "SMS",
+      "in_app": "In-app"
+    },
+    "types": {
+      "reservation_confirmation": "Reservation Confirmed",
+      "reservation_update": "Reservation Updated",
+      "reservation_cancellation": "Reservation Cancelled",
+      "reservation_reminder": "Reservation Reminder",
+      "meeting_scheduled": "Meeting Scheduled",
+      "meeting_updated": "Meeting Updated",
+      "meeting_cancelled": "Meeting Cancelled",
+      "meeting_rescheduled": "Meeting Rescheduled",
+      "meeting_notes_published": "Meeting Notes Published",
+      "vote_created": "New Vote",
+      "vote_closed": "Vote Closed",
+      "agreement_activated": "Agreement Activated",
+      "payment_due": "Payment Due",
+      "payment_overdue": "Payment Overdue",
+      "payment_confirmed": "Payment Confirmed",
+      "system_announcement": "System Announcement"
+    }
+  },
+  "errors": {
+    "somethingWentWrong": "Something went wrong",
+    "unexpectedError": "An unexpected error occurred. Please try again.",
+    "technicalDetails": "Technical Details",
+    "tryAgain": "Try Again",
+    "reloadPage": "Reload Page",
+    "networkError": "Network connection error. Please check your internet connection.",
+    "serverError": "Server error. Please try again later.",
+    "validationError": "Please check your input and try again.",
+    "unauthorizedError": "You are not authorized to perform this action.",
+    "notFoundError": "The requested resource was not found.",
+    "paymentError": "Payment processing failed. Please try again.",
+    "reservationConflict": "The selected time slot is no longer available.",
+    "rateLimitError": "Too many requests. Please wait a moment and try again.",
+    "sessionExpired": "Your session has expired. Please log in again.",
+    "permissionDenied": "You don't have permission to perform this action.",
+    "resourceNotFound": "The requested resource could not be found.",
+    "connectionLost": "Connection lost. Attempting to reconnect...",
+    "connectionRestored": "Connection restored.",
+    "offlineMode": "You are currently offline. Some features may be limited.",
+    "retry": "Retry",
+    "dismiss": "Dismiss",
+    "reportIssue": "Report Issue"
+  }
+}

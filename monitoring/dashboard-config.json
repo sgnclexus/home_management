@@ -1,0 +1,430 @@
+{
+  "dashboards": [
+    {
+      "id": "system-overview",
+      "name": "System Overview",
+      "description": "High-level system health and performance metrics",
+      "widgets": [
+        {
+          "id": "system-status",
+          "type": "status",
+          "title": "System Status",
+          "config": {
+            "endpoints": [
+              {
+                "name": "API",
+                "url": "/api/health",
+                "critical": true
+              },
+              {
+                "name": "Frontend",
+                "url": "/",
+                "critical": true
+              },
+              {
+                "name": "Database",
+                "url": "/api/health/database",
+                "critical": true
+              },
+              {
+                "name": "Payments",
+                "url": "/api/health/payments",
+                "critical": false
+              }
+            ]
+          }
+        },
+        {
+          "id": "response-times",
+          "type": "line-chart",
+          "title": "Response Times (24h)",
+          "config": {
+            "metrics": [
+              {
+                "name": "API Response Time",
+                "query": "avg(response_time) by endpoint",
+                "color": "#3b82f6"
+              },
+              {
+                "name": "Database Query Time",
+                "query": "avg(db_query_time)",
+                "color": "#10b981"
+              }
+            ],
+            "timeRange": "24h",
+            "refreshInterval": "5m"
+          }
+        },
+        {
+          "id": "error-rates",
+          "type": "line-chart",
+          "title": "Error Rates (24h)",
+          "config": {
+            "metrics": [
+              {
+                "name": "4xx Errors",
+                "query": "rate(http_requests_total{status=~\"4..\"}[5m])",
+                "color": "#f59e0b"
+              },
+              {
+                "name": "5xx Errors",
+                "query": "rate(http_requests_total{status=~\"5..\"}[5m])",
+                "color": "#ef4444"
+              }
+            ],
+            "timeRange": "24h",
+            "refreshInterval": "1m"
+          }
+        },
+        {
+          "id": "active-users",
+          "type": "number",
+          "title": "Active Users",
+          "config": {
+            "metric": "count(distinct(user_sessions))",
+            "timeRange": "1h",
+            "refreshInterval": "5m"
+          }
+        }
+      ]
+    },
+    {
+      "id": "performance",
+      "name": "Performance Metrics",
+      "description": "Detailed performance and resource utilization metrics",
+      "widgets": [
+        {
+          "id": "memory-usage",
+          "type": "gauge",
+          "title": "Memory Usage",
+          "config": {
+            "metric": "memory_usage_percent",
+            "thresholds": {
+              "warning": 70,
+              "critical": 85
+            },
+            "refreshInterval": "1m"
+          }
+        },
+        {
+          "id": "cpu-usage",
+          "type": "gauge",
+          "title": "CPU Usage",
+          "config": {
+            "metric": "cpu_usage_percent",
+            "thresholds": {
+              "warning": 70,
+              "critical": 85
+            },
+            "refreshInterval": "1m"
+          }
+        },
+        {
+          "id": "function-invocations",
+          "type": "bar-chart",
+          "title": "Function Invocations (1h)",
+          "config": {
+            "metrics": [
+              {
+                "name": "API Calls",
+                "query": "sum(function_invocations{function=\"api\"})",
+                "color": "#3b82f6"
+              },
+              {
+                "name": "Scheduled Functions",
+                "query": "sum(function_invocations{function=~\".*scheduled.*\"})",
+                "color": "#10b981"
+              }
+            ],
+            "timeRange": "1h",
+            "refreshInterval": "5m"
+          }
+        },
+        {
+          "id": "database-operations",
+          "type": "line-chart",
+          "title": "Database Operations (24h)",
+          "config": {
+            "metrics": [
+              {
+                "name": "Reads",
+                "query": "rate(firestore_reads_total[5m])",
+                "color": "#3b82f6"
+              },
+              {
+                "name": "Writes",
+                "query": "rate(firestore_writes_total[5m])",
+                "color": "#10b981"
+              },
+              {
+                "name": "Deletes",
+                "query": "rate(firestore_deletes_total[5m])",
+                "color": "#ef4444"
+              }
+            ],
+            "timeRange": "24h",
+            "refreshInterval": "5m"
+          }
+        }
+      ]
+    },
+    {
+      "id": "business-metrics",
+      "name": "Business Metrics",
+      "description": "Key business and user engagement metrics",
+      "widgets": [
+        {
+          "id": "daily-active-users",
+          "type": "number",
+          "title": "Daily Active Users",
+          "config": {
+            "metric": "count(distinct(daily_active_users))",
+            "timeRange": "24h",
+            "refreshInterval": "1h"
+          }
+        },
+        {
+          "id": "payment-volume",
+          "type": "number",
+          "title": "Payment Volume (24h)",
+          "config": {
+            "metric": "sum(payment_amount)",
+            "timeRange": "24h",
+            "refreshInterval": "1h",
+            "format": "currency"
+          }
+        },
+        {
+          "id": "reservation-bookings",
+          "type": "line-chart",
+          "title": "Reservation Bookings (7d)",
+          "config": {
+            "metrics": [
+              {
+                "name": "New Bookings",
+                "query": "count(reservations_created)",
+                "color": "#3b82f6"
+              },
+              {
+                "name": "Cancellations",
+                "query": "count(reservations_cancelled)",
+                "color": "#ef4444"
+              }
+            ],
+            "timeRange": "7d",
+            "refreshInterval": "1h"
+          }
+        },
+        {
+          "id": "user-registrations",
+          "type": "line-chart",
+          "title": "User Registrations (30d)",
+          "config": {
+            "metrics": [
+              {
+                "name": "New Users",
+                "query": "count(users_created)",
+                "color": "#10b981"
+              }
+            ],
+            "timeRange": "30d",
+            "refreshInterval": "1h"
+          }
+        }
+      ]
+    },
+    {
+      "id": "security",
+      "name": "Security Metrics",
+      "description": "Security events and threat monitoring",
+      "widgets": [
+        {
+          "id": "failed-logins",
+          "type": "line-chart",
+          "title": "Failed Login Attempts (24h)",
+          "config": {
+            "metrics": [
+              {
+                "name": "Failed Logins",
+                "query": "count(auth_failures)",
+                "color": "#ef4444"
+              }
+            ],
+            "timeRange": "24h",
+            "refreshInterval": "5m"
+          }
+        },
+        {
+          "id": "security-incidents",
+          "type": "table",
+          "title": "Recent Security Incidents",
+          "config": {
+            "query": "security_incidents",
+            "columns": [
+              "timestamp",
+              "type",
+              "severity",
+              "source_ip",
+              "user_id",
+              "description"
+            ],
+            "limit": 10,
+            "refreshInterval": "1m"
+          }
+        },
+        {
+          "id": "rate-limit-hits",
+          "type": "bar-chart",
+          "title": "Rate Limit Hits (1h)",
+          "config": {
+            "metrics": [
+              {
+                "name": "Rate Limited Requests",
+                "query": "count(rate_limit_exceeded)",
+                "color": "#f59e0b"
+              }
+            ],
+            "timeRange": "1h",
+            "refreshInterval": "5m"
+          }
+        },
+        {
+          "id": "suspicious-activity",
+          "type": "number",
+          "title": "Suspicious Activity Alerts",
+          "config": {
+            "metric": "count(suspicious_activity)",
+            "timeRange": "24h",
+            "refreshInterval": "5m"
+          }
+        }
+      ]
+    }
+  ],
+  "alerts": [
+    {
+      "id": "api-down",
+      "name": "API Down",
+      "description": "API health check failing",
+      "condition": "health_check_status{endpoint=\"api\"} == 0",
+      "severity": "critical",
+      "duration": "5m",
+      "notifications": [
+        {
+          "type": "slack",
+          "channel": "#alerts",
+          "message": "🚨 API is down! Health check failing for 5+ minutes."
+        },
+        {
+          "type": "email",
+          "recipients": ["admin@example.com"],
+          "subject": "CRITICAL: API Down"
+        }
+      ]
+    },
+    {
+      "id": "high-error-rate",
+      "name": "High Error Rate",
+      "description": "Error rate above 5%",
+      "condition": "rate(http_requests_total{status=~\"5..\"}[5m]) / rate(http_requests_total[5m]) > 0.05",
+      "severity": "warning",
+      "duration": "10m",
+      "notifications": [
+        {
+          "type": "slack",
+          "channel": "#alerts",
+          "message": "⚠️ High error rate detected (>5%) for 10+ minutes."
+        }
+      ]
+    },
+    {
+      "id": "slow-response-time",
+      "name": "Slow Response Time",
+      "description": "Average response time above 2 seconds",
+      "condition": "avg(response_time) > 2000",
+      "severity": "warning",
+      "duration": "15m",
+      "notifications": [
+        {
+          "type": "slack",
+          "channel": "#performance",
+          "message": "🐌 Slow response times detected (>2s average) for 15+ minutes."
+        }
+      ]
+    },
+    {
+      "id": "payment-failures",
+      "name": "Payment Processing Failures",
+      "description": "High rate of payment failures",
+      "condition": "rate(payment_failures[5m]) > 0.1",
+      "severity": "high",
+      "duration": "5m",
+      "notifications": [
+        {
+          "type": "slack",
+          "channel": "#payments",
+          "message": "💳 High payment failure rate detected!"
+        },
+        {
+          "type": "email",
+          "recipients": ["finance@example.com"],
+          "subject": "HIGH: Payment Processing Issues"
+        }
+      ]
+    },
+    {
+      "id": "security-incident",
+      "name": "Security Incident",
+      "description": "Security incident detected",
+      "condition": "increase(security_incidents[5m]) > 0",
+      "severity": "critical",
+      "duration": "0m",
+      "notifications": [
+        {
+          "type": "slack",
+          "channel": "#security",
+          "message": "🔒 Security incident detected! Immediate attention required."
+        },
+        {
+          "type": "email",
+          "recipients": ["security@example.com"],
+          "subject": "CRITICAL: Security Incident"
+        }
+      ]
+    },
+    {
+      "id": "backup-failure",
+      "name": "Backup Failure",
+      "description": "Daily backup failed",
+      "condition": "backup_status == 0",
+      "severity": "high",
+      "duration": "0m",
+      "notifications": [
+        {
+          "type": "slack",
+          "channel": "#ops",
+          "message": "💾 Daily backup failed! Manual intervention required."
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "refreshInterval": "30s",
+    "timezone": "UTC",
+    "theme": "dark",
+    "autoRefresh": true,
+    "notifications": {
+      "slack": {
+        "webhookUrl": "${SLACK_WEBHOOK_URL}",
+        "defaultChannel": "#alerts"
+      },
+      "email": {
+        "smtpServer": "${SMTP_SERVER}",
+        "smtpPort": 587,
+        "username": "${SMTP_USERNAME}",
+        "password": "${SMTP_PASSWORD}",
+        "fromAddress": "alerts@homemanagement.com"
+      }
+    }
+  }
+}
