@@ -6,13 +6,83 @@ import {
   PaymentAuditReport,
   AuditLogFilters 
 } from '@home-management/types';
-import { 
-  paymentTransactionLogToFirestoreDocument,
-  firestoreDocumentToPaymentTransactionLog,
-  auditLogToFirestoreDocument,
-  firestoreDocumentToAuditLog,
-  FIRESTORE_COLLECTIONS 
-} from '@home-management/utils';
+// Temporary inline utils until @home-management/utils is properly built
+const FIRESTORE_COLLECTIONS = {
+  PAYMENT_TRANSACTION_LOGS: 'payment_transaction_logs',
+  AUDIT_LOGS: 'audit_logs',
+} as const;
+
+const paymentTransactionLogToFirestoreDocument = (log: PaymentTransactionLog) => {
+  return {
+    id: log.id,
+    paymentId: log.paymentId,
+    userId: log.userId,
+    action: log.action,
+    provider: log.provider,
+    providerTransactionId: log.providerTransactionId,
+    providerResponse: log.providerResponse,
+    amount: log.amount,
+    currency: log.currency,
+    ipAddress: log.ipAddress,
+    userAgent: log.userAgent,
+    timestamp: log.timestamp,
+    metadata: log.metadata,
+  };
+};
+
+const firestoreDocumentToPaymentTransactionLog = (doc: any): PaymentTransactionLog => {
+  return {
+    id: doc.id,
+    paymentId: doc.paymentId,
+    userId: doc.userId,
+    action: doc.action,
+    provider: doc.provider,
+    providerTransactionId: doc.providerTransactionId,
+    providerResponse: doc.providerResponse,
+    amount: doc.amount,
+    currency: doc.currency,
+    ipAddress: doc.ipAddress,
+    userAgent: doc.userAgent,
+    timestamp: doc.timestamp?.toDate ? doc.timestamp.toDate() : new Date(doc.timestamp),
+    metadata: doc.metadata,
+    createdAt: doc.timestamp?.toDate ? doc.timestamp.toDate() : new Date(doc.timestamp),
+    updatedAt: doc.timestamp?.toDate ? doc.timestamp.toDate() : new Date(doc.timestamp),
+  };
+};
+
+const auditLogToFirestoreDocument = (log: AuditLog) => {
+  return {
+    id: log.id,
+    type: log.type,
+    action: log.action,
+    userId: log.userId,
+    entityId: log.entityId,
+    entityType: log.entityType,
+    details: log.details,
+    ipAddress: log.ipAddress,
+    userAgent: log.userAgent,
+    timestamp: log.timestamp,
+    severity: log.severity,
+  };
+};
+
+const firestoreDocumentToAuditLog = (doc: any): AuditLog => {
+  return {
+    id: doc.id,
+    type: doc.type,
+    action: doc.action,
+    userId: doc.userId,
+    entityId: doc.entityId,
+    entityType: doc.entityType,
+    details: doc.details,
+    ipAddress: doc.ipAddress,
+    userAgent: doc.userAgent,
+    timestamp: doc.timestamp?.toDate ? doc.timestamp.toDate() : new Date(doc.timestamp),
+    severity: doc.severity,
+    createdAt: doc.timestamp?.toDate ? doc.timestamp.toDate() : new Date(doc.timestamp),
+    updatedAt: doc.timestamp?.toDate ? doc.timestamp.toDate() : new Date(doc.timestamp),
+  };
+};
 import { ConfigService } from '@nestjs/config';
 import { FieldValue } from 'firebase-admin/firestore';
 import { FirebaseConfigService } from '../../config/firebase.config';

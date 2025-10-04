@@ -111,11 +111,19 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ payment, onSuccess, on
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm text-gray-600">{t('payments.dueDate')}:</span>
               <span className="text-sm font-medium text-gray-900">
-                {new Intl.DateTimeFormat('en-US', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                }).format(new Date(payment.dueDate))}
+                {(() => {
+                  try {
+                    const dateObj = payment.dueDate instanceof Date ? payment.dueDate : new Date(payment.dueDate);
+                    if (isNaN(dateObj.getTime())) return '-';
+                    return new Intl.DateTimeFormat('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    }).format(dateObj);
+                  } catch (error) {
+                    return '-';
+                  }
+                })()}
               </span>
             </div>
             <div className="flex justify-between items-center border-t pt-2">

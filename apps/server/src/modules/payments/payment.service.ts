@@ -19,11 +19,53 @@ import {
   PaymentStatus,
   PaymentMethod 
 } from '@home-management/types';
-import { 
-  paymentToFirestoreDocument,
-  firestoreDocumentToPayment,
-  FIRESTORE_COLLECTIONS 
-} from '@home-management/utils';
+// Temporary inline utils until @home-management/utils is properly built
+const FIRESTORE_COLLECTIONS = {
+  PAYMENTS: 'payments',
+  USERS: 'users',
+} as const;
+
+const paymentToFirestoreDocument = (payment: Payment) => {
+  const doc: any = {
+    id: payment.id,
+    userId: payment.userId,
+    amount: payment.amount,
+    currency: payment.currency,
+    description: payment.description,
+    status: payment.status,
+    dueDate: payment.dueDate,
+  };
+  
+  // Only include optional fields if they have values (not undefined)
+  if (payment.paidDate !== undefined) {
+    doc.paidDate = payment.paidDate;
+  }
+  if (payment.paymentMethod !== undefined) {
+    doc.paymentMethod = payment.paymentMethod;
+  }
+  if (payment.transactionId !== undefined) {
+    doc.transactionId = payment.transactionId;
+  }
+  
+  return doc;
+};
+
+const firestoreDocumentToPayment = (doc: any): Payment => {
+  return {
+    id: doc.id,
+    userId: doc.userId,
+    amount: doc.amount,
+    currency: doc.currency,
+    description: doc.description,
+    status: doc.status,
+    dueDate: doc.dueDate?.toDate ? doc.dueDate.toDate() : (doc.dueDate ? new Date(doc.dueDate) : new Date()),
+    paidDate: doc.paidDate ? (doc.paidDate?.toDate ? doc.paidDate.toDate() : new Date(doc.paidDate)) : undefined,
+    paymentMethod: doc.paymentMethod || undefined,
+    transactionId: doc.transactionId || undefined,
+    createdAt: doc.createdAt?.toDate ? doc.createdAt.toDate() : new Date(doc.createdAt || Date.now()),
+    updatedAt: doc.updatedAt?.toDate ? doc.updatedAt.toDate() : new Date(doc.updatedAt || Date.now()),
+  };
+};
 import { FirebaseConfigService } from '../../config/firebase.config';
 import { PaymentAuditService } from './payment-audit.service';
 import { FieldValue } from 'firebase-admin/firestore';

@@ -72,7 +72,7 @@ interface PaymentDashboardContentProps {
   t: (key: string) => string;
   getStatusColor: (status: PaymentStatus) => string;
   formatCurrency: (amount: number, currency?: string) => string;
-  formatDate: (date: Date) => string;
+  formatDate: (date: Date | string | undefined) => string;
 }
 
 const PaymentDashboardContent: React.FC<PaymentDashboardContentProps> = ({
@@ -195,10 +195,24 @@ const formatCurrency = (amount: number, currency: string = 'USD'): string => {
   }).format(amount);
 };
 
-const formatDate = (date: Date): string => {
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  }).format(new Date(date));
+const formatDate = (date: Date | string | undefined): string => {
+  if (!date) return '-';
+  
+  try {
+    const dateObj = date instanceof Date ? date : new Date(date);
+    
+    // Check if the date is valid
+    if (isNaN(dateObj.getTime())) {
+      return '-';
+    }
+    
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    }).format(dateObj);
+  } catch (error) {
+    console.warn('Invalid date format:', date);
+    return '-';
+  }
 };

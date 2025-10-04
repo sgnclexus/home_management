@@ -35,12 +35,26 @@ export const PaymentHistory: React.FC<PaymentHistoryProps> = ({ payments, classN
     }).format(amount);
   };
 
-  const formatDate = (date: Date): string => {
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    }).format(new Date(date));
+  const formatDate = (date: Date | string | undefined): string => {
+    if (!date) return '-';
+    
+    try {
+      const dateObj = date instanceof Date ? date : new Date(date);
+      
+      // Check if the date is valid
+      if (isNaN(dateObj.getTime())) {
+        return '-';
+      }
+      
+      return new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      }).format(dateObj);
+    } catch (error) {
+      console.warn('Invalid date format:', date);
+      return '-';
+    }
   };
 
   // Filter and sort payments
@@ -51,7 +65,9 @@ export const PaymentHistory: React.FC<PaymentHistoryProps> = ({ payments, classN
       
       switch (sortBy) {
         case 'date':
-          comparison = new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+          const dateA = a.dueDate ? new Date(a.dueDate).getTime() : 0;
+          const dateB = b.dueDate ? new Date(b.dueDate).getTime() : 0;
+          comparison = dateA - dateB;
           break;
         case 'amount':
           comparison = a.amount - b.amount;
@@ -190,7 +206,7 @@ export const PaymentHistory: React.FC<PaymentHistoryProps> = ({ payments, classN
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {payment.paidDate ? formatDate(payment.paidDate) : '-'}
+                  {formatDate(payment.paidDate)}
                 </td>
               </tr>
             ))}

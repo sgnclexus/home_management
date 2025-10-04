@@ -204,12 +204,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Listen for auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth(), async (user) => {
+      console.log('🔄 Auth state changed:', user ? `User: ${user.email}` : 'No user');
       setUser(user);
       
       if (user) {
-        // Fetch user role when user is authenticated
-        const role = await fetchUserRole(user);
-        setUserRole(role);
+        // Ensure the user has a valid ID token
+        try {
+          const token = await user.getIdToken(true); // Force refresh
+          console.log('✅ Got valid ID token for user:', user.email);
+          
+          // Fetch user role when user is authenticated
+          const role = await fetchUserRole(user);
+          setUserRole(role);
+        } catch (error) {
+          console.error('❌ Failed to get ID token:', error);
+          // If we can't get a valid token, sign out the user
+          await signOut(auth());
+          setUserRole(null);
+        }
       } else {
         setUserRole(null);
       }
@@ -219,6 +231,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     return unsubscribe;
   }, []);
+
+  // Add a periodic token refresh to ensure tokens stay valid
+  useEffect(() => {
+    if (!user) return;
+
+    const refreshInterval = setInterval(async () => {
+      try {
+        // Force refresh the token every 30 minutes
+        await user.getIdToken(true);
+        console.log('🔄 Token refreshed automatically');
+      } catch (error) {
+        console.error('❌ Failed to refresh token:', error);
+        // If token refresh fails, the user might need to re-authenticate
+        console.log('⚠️  User may need to re-authenticate');
+      }
+    }, 30 * 60 * 1000); // 30 minutes
+
+    return () => clearInterval(refreshInterval);
+  }, [user]);
 
   const value: AuthContextType = {
     user,

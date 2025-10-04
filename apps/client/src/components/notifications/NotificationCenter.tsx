@@ -190,16 +190,30 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
     }
   };
 
-  const formatDate = (date: Date) => {
-    const now = new Date();
-    const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
+  const formatDate = (date: Date | string | undefined) => {
+    if (!date) return '-';
+    
+    try {
+      const dateObj = date instanceof Date ? date : new Date(date);
+      
+      // Check if the date is valid
+      if (isNaN(dateObj.getTime())) {
+        return '-';
+      }
+      
+      const now = new Date();
+      const diffInHours = (now.getTime() - dateObj.getTime()) / (1000 * 60 * 60);
 
-    if (diffInHours < 1) {
-      return t('notifications.justNow');
-    } else if (diffInHours < 24) {
-      return t('notifications.hoursAgo', { hours: Math.floor(diffInHours) });
-    } else {
-      return date.toLocaleDateString();
+      if (diffInHours < 1) {
+        return t('notifications.justNow');
+      } else if (diffInHours < 24) {
+        return t('notifications.hoursAgo', { hours: Math.floor(diffInHours) });
+      } else {
+        return dateObj.toLocaleDateString();
+      }
+    } catch (error) {
+      console.warn('Invalid date format:', date);
+      return '-';
     }
   };
 

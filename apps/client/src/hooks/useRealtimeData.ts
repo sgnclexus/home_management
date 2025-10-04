@@ -11,10 +11,36 @@ import {
   orderBy,
   limit,
   Unsubscribe,
-  getDoc
+  getDoc,
+  Timestamp
 } from 'firebase/firestore';
 import { firestore } from '../config/firebase.config';
 import { Payment, Reservation, Meeting } from '@home-management/types';
+
+// Helper function to convert Firestore Timestamps to Date objects
+const convertFirestoreTimestamps = (data: any): any => {
+  if (data === null || data === undefined) {
+    return data;
+  }
+  
+  if (data instanceof Timestamp) {
+    return data.toDate();
+  }
+  
+  if (Array.isArray(data)) {
+    return data.map(convertFirestoreTimestamps);
+  }
+  
+  if (typeof data === 'object') {
+    const converted: any = {};
+    for (const [key, value] of Object.entries(data)) {
+      converted[key] = convertFirestoreTimestamps(value);
+    }
+    return converted;
+  }
+  
+  return data;
+};
 
 // Connection status type
 export type ConnectionStatus = 'connected' | 'disconnected' | 'reconnecting' | 'error';
@@ -174,10 +200,14 @@ const useRealtimeCollection = <T>(
       const unsubscribe = onSnapshot(
         q,
         (snapshot: QuerySnapshot) => {
-          const data = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-          })) as T[];
+          const data = snapshot.docs.map(doc => {
+            const docData = doc.data();
+            const convertedData = convertFirestoreTimestamps(docData);
+            return {
+              id: doc.id,
+              ...convertedData
+            };
+          }) as T[];
 
           // Merge with optimistic updates
           const mergedData = enableOptimisticUpdates
@@ -403,9 +433,11 @@ export const useRealtimeDocument = <T>(
         docRef,
         (snapshot: DocumentSnapshot) => {
           if (snapshot.exists()) {
+            const docData = snapshot.data();
+            const convertedData = convertFirestoreTimestamps(docData);
             const data = {
               id: snapshot.id,
-              ...snapshot.data()
+              ...convertedData
             } as T;
 
             setState(prev => ({

@@ -130,8 +130,22 @@ export const AgreementCard: React.FC<AgreementCardProps> = ({
     }
   };
 
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString();
+  const formatDate = (date: Date | string | undefined) => {
+    if (!date) return '-';
+    
+    try {
+      const dateObj = date instanceof Date ? date : new Date(date);
+      
+      // Check if the date is valid
+      if (isNaN(dateObj.getTime())) {
+        return '-';
+      }
+      
+      return dateObj.toLocaleDateString();
+    } catch (error) {
+      console.warn('Invalid date format:', date);
+      return '-';
+    }
   };
 
   const renderComment = (comment: AgreementComment, depth = 0) => (

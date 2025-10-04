@@ -72,41 +72,23 @@ export default function DashboardPage() {
             <div className="flex items-center space-x-4">
               <div className="text-sm text-gray-600">
                 {t('dashboard.welcome')}, <span className="font-medium">{user.displayName}</span>
-                {/* Debug info */}
-                <div className="text-xs text-gray-500 mt-1">
-                  Role: {userRole || 'Loading...'} | Admin Access: {hasAdminAccess ? 'Yes' : 'No'}
-                </div>
+
               </div>
+
+              {/* Temporary re-auth button for debugging */}
               <button
                 onClick={async () => {
-                  console.log('🔄 Manually refreshing user role...');
+                  console.log('🔄 Re-authenticating...');
                   try {
-                    await refreshUserRole();
-                    console.log('✅ Role refresh completed');
+                    await logout();
+                    router.push('/auth');
                   } catch (error) {
-                    console.error('❌ Role refresh failed:', error);
+                    console.error('❌ Re-auth failed:', error);
                   }
                 }}
-                className="bg-blue-600 text-white px-3 py-1 text-sm rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="bg-yellow-600 text-white px-3 py-1 text-sm rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
               >
-                🔄 Refresh Role
-              </button>
-              <button
-                onClick={async () => {
-                  console.log('🔄 Testing fresh token...');
-                  try {
-                    if (user) {
-                      const token = await user.getIdToken(true); // Force refresh
-                      console.log('🔑 Got fresh token (first 50 chars):', token.substring(0, 50) + '...');
-                      await refreshUserRole();
-                    }
-                  } catch (error) {
-                    console.error('❌ Fresh token test failed:', error);
-                  }
-                }}
-                className="bg-green-600 text-white px-3 py-1 text-sm rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-              >
-                🔑 Fresh Token
+                🔄 Re-login
               </button>
               <button
                 onClick={handleLogout}

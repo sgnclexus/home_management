@@ -54,19 +54,43 @@ export const CreatePaymentForm: React.FC<CreatePaymentFormProps> = ({ users, onS
       setLoading(true);
       setError(null);
 
-      const token = await user.getIdToken();
+      // Ensure we have a fresh, valid ID token
+      console.log('🔑 Getting fresh ID token for payment creation...');
+      const token = await user.getIdToken(true); // Force refresh
+      console.log('✅ Got ID token, creating payment...');
+      
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/payments`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          dueDate: formData.dueDate.toISOString()
+        }),
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create payment');
+        let errorMessage = 'Failed to create payment';
+        
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+          
+          // Handle specific error cases
+          if (response.status === 401) {
+            errorMessage = 'Authentication failed. Please try logging out and logging back in.';
+          } else if (response.status === 403) {
+            errorMessage = 'You do not have permission to create payments.';
+          } else if (response.status === 500) {
+            errorMessage = 'Server error. Please try again later or contact support.';
+          }
+        } catch (parseError) {
+          console.error('Failed to parse error response:', parseError);
+        }
+        
+        throw new Error(errorMessage);
       }
 
       onSuccess();

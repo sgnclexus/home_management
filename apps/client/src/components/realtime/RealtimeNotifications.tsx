@@ -81,17 +81,31 @@ const RealtimeNotifications: React.FC<RealtimeNotificationsProps> = ({
     }
   };
 
-  const formatTimestamp = (timestamp: Date) => {
-    const now = new Date();
-    const diff = now.getTime() - timestamp.getTime();
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(diff / 3600000);
-    const days = Math.floor(diff / 86400000);
+  const formatTimestamp = (timestamp: Date | string | undefined) => {
+    if (!timestamp) return '-';
+    
+    try {
+      const dateObj = timestamp instanceof Date ? timestamp : new Date(timestamp);
+      
+      // Check if the date is valid
+      if (isNaN(dateObj.getTime())) {
+        return '-';
+      }
+      
+      const now = new Date();
+      const diff = now.getTime() - dateObj.getTime();
+      const minutes = Math.floor(diff / 60000);
+      const hours = Math.floor(diff / 3600000);
+      const days = Math.floor(diff / 86400000);
 
-    if (minutes < 1) return 'Just now';
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    return `${days}d ago`;
+      if (minutes < 1) return 'Just now';
+      if (minutes < 60) return `${minutes}m ago`;
+      if (hours < 24) return `${hours}h ago`;
+      return `${days}d ago`;
+    } catch (error) {
+      console.warn('Invalid timestamp format:', timestamp);
+      return '-';
+    }
   };
 
   if (visibleNotifications.length === 0) {
