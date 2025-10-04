@@ -105,6 +105,12 @@ my-fullstack-app/
 - **UserManagement**: User administration and role assignment
 - **NotificationCenter**: Real-time notifications and alerts
 
+#### Authentication Components
+- **LoginForm**: User login interface with email and password
+- **RegisterForm**: User registration interface for new accounts
+- **PasswordResetForm**: Password reset interface with email input and validation
+- **UserProfile**: User profile management and settings
+
 #### Shared Components
 - **DataTable**: Reusable table with sorting, filtering, and pagination
 - **Modal**: Configurable modal dialogs
@@ -128,6 +134,29 @@ interface AuthGuard {
 
 interface RoleGuard {
   canActivate(context: ExecutionContext, requiredRoles: UserRole[]): boolean
+}
+```
+
+#### Password Reset Component Interface
+```typescript
+interface PasswordResetFormProps {
+  onSuccess?: () => void;
+  onSwitchToLogin?: () => void;
+}
+
+interface PasswordResetFormState {
+  email: string;
+  loading: boolean;
+  error: string | null;
+  success: boolean;
+}
+
+interface PasswordResetValidation {
+  email: {
+    required: true;
+    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    message: string;
+  }
 }
 ```
 
@@ -758,6 +787,44 @@ export class AuditReportService {
 - **Artillery**: Load testing for API endpoints
 - **Firebase Performance Monitoring**: Real-time performance tracking
 - **Metrics**: Response time, throughput, and error rates
+
+### Password Reset Localization
+
+#### New Translation Keys Required
+
+**English** (`apps/client/public/locales/en/common.json`):
+```json
+{
+  "auth": {
+    "resetPasswordEmailLabel": "Email Address",
+    "resetPasswordEmailPlaceholder": "Enter your email address",
+    "sendResetEmail": "Send Reset Email",
+    "sendingResetEmail": "Sending...",
+    "resetEmailSent": "Password reset email sent successfully",
+    "resetEmailSentDescription": "If an account with that email exists, you will receive password reset instructions shortly.",
+    "resetEmailError": "Failed to send reset email. Please try again.",
+    "emailRequired": "Email address is required",
+    "emailInvalid": "Please enter a valid email address"
+  }
+}
+```
+
+**Spanish** (`apps/client/public/locales/es/common.json`):
+```json
+{
+  "auth": {
+    "resetPasswordEmailLabel": "Dirección de Correo Electrónico",
+    "resetPasswordEmailPlaceholder": "Ingrese su dirección de correo electrónico",
+    "sendResetEmail": "Enviar Correo de Restablecimiento",
+    "sendingResetEmail": "Enviando...",
+    "resetEmailSent": "Correo de restablecimiento enviado exitosamente",
+    "resetEmailSentDescription": "Si existe una cuenta con ese correo electrónico, recibirá instrucciones de restablecimiento de contraseña en breve.",
+    "resetEmailError": "Error al enviar el correo de restablecimiento. Intente nuevamente.",
+    "emailRequired": "La dirección de correo electrónico es requerida",
+    "emailInvalid": "Por favor ingrese una dirección de correo electrónico válida"
+  }
+}
+```
 
 ### Testing Data Management
 ```typescript

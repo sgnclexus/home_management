@@ -217,7 +217,38 @@ export class UsersService {
     // Check if user exists
     const doc = await userRef.get();
     if (!doc.exists) {
-      throw new NotFoundException('User not found');
+      // If user document doesn't exist, try to get user info from Firebase Auth and create it
+      try {
+        const auth = this.firebaseConfig.getAuth();
+        const firebaseUser = await auth.getUser(uid);
+        
+        // Create user document with Firebase Auth data and profile data
+        const userDocData = {
+          ...createDefaultUserDocument(
+            uid,
+            firebaseUser.email || '',
+            firebaseUser.displayName || profileDto.displayName || '',
+            UserRole.RESIDENT, // Default role
+            profileDto.preferredLanguage || 'es'
+          ),
+          ...profileDto,
+        };
+
+        await userRef.set({
+          ...userDocData,
+          createdAt: FieldValue.serverTimestamp(),
+          updatedAt: FieldValue.serverTimestamp(),
+        });
+
+        // Return the created user
+        const createdDoc = await userRef.get();
+        const createdUserDoc = createdDoc.data() as UserDocument;
+        
+        return firestoreDocumentToUser(createdUserDoc);
+      } catch (error) {
+        console.error('Failed to create user document from Firebase Auth:', error);
+        throw new NotFoundException('User not found and could not be created');
+      }
     }
 
     // Update profile data

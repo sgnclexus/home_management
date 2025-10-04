@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'next-i18next';
+import { formatDateTime, formatDateTimeRange } from '../../utils/dateUtils';
 import { CommonArea, TimeSlot, CreateReservationDto } from '@home-management/types';
 
 interface ReservationBookingFormProps {
@@ -47,8 +48,8 @@ export const ReservationBookingForm: React.FC<ReservationBookingFormProps> = ({
     }
   };
 
-  const formatDateTime = (date: Date) => {
-    return date.toLocaleDateString('es-ES', {
+  const formatBookingDate = (date: any) => {
+    return formatDateTime(date, 'es-ES', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -57,15 +58,7 @@ export const ReservationBookingForm: React.FC<ReservationBookingFormProps> = ({
   };
 
   const formatTimeSlot = (slot: TimeSlot) => {
-    const startTime = new Date(slot.start).toLocaleTimeString('es-ES', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-    const endTime = new Date(slot.end).toLocaleTimeString('es-ES', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-    return `${startTime} - ${endTime}`;
+    return formatDateTimeRange(slot.start, slot.end);
   };
 
   if (!selectedArea || !selectedDate || !selectedTimeSlot) {
@@ -92,7 +85,7 @@ export const ReservationBookingForm: React.FC<ReservationBookingFormProps> = ({
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">{t('reservations.date')}:</span>
-              <span className="font-medium">{formatDateTime(selectedDate)}</span>
+              <span className="font-medium">{formatBookingDate(selectedDate)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">{t('reservations.time')}:</span>

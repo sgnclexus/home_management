@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'next-i18next';
+import { formatDateTimeRange } from '../../utils/dateUtils';
 import { CommonArea, TimeSlot } from '@home-management/types';
 
 interface ReservationCalendarProps {
@@ -79,15 +80,7 @@ export const ReservationCalendar: React.FC<ReservationCalendarProps> = ({
   };
 
   const formatTimeSlot = (slot: TimeSlot) => {
-    const startTime = new Date(slot.start).toLocaleTimeString('es-ES', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-    const endTime = new Date(slot.end).toLocaleTimeString('es-ES', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-    return `${startTime} - ${endTime}`;
+    return formatDateTimeRange(slot.start, slot.end);
   };
 
   return (

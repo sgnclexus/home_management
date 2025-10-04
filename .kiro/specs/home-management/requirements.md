@@ -58,6 +58,22 @@ The Home Management application is a comprehensive condominium administration sy
 5. WHEN Security personnel log in THEN the system SHALL allow them to check area reservations and manage visitor access
 6. IF a user attempts to access unauthorized features THEN the system SHALL deny access and redirect to appropriate sections
 
+### Requirement 4.1: Password Reset Functionality
+
+**User Story:** As a user who has forgotten my password, I want to enter my email address on the password reset page, so that I can receive instructions to reset my password.
+
+#### Acceptance Criteria
+
+1. WHEN a user clicks "Forgot Password" from the login form THEN the system SHALL display a password reset form with an email input field
+2. WHEN a user enters a valid email address in the reset form THEN the system SHALL accept the input without validation errors
+3. WHEN a user enters an invalid email format THEN the system SHALL display appropriate validation error messages
+4. WHEN a user submits the reset form with a valid email THEN the system SHALL send a password reset email to that address
+5. WHEN the password reset email is sent successfully THEN the system SHALL display a confirmation message to the user
+6. WHEN a user is on the password reset form THEN the system SHALL display a "Back to Login" link or button
+7. WHEN a user clicks "Back to Login" THEN the system SHALL return them to the login form
+8. WHEN the form is submitted THEN the system SHALL prevent multiple submissions during processing
+9. WHEN displaying messages THEN the system SHALL use clear, user-friendly language in the appropriate locale
+
 ### Requirement 5: Multi-Language Support System
 
 **User Story:** As a user, I want to use the application in either Spanish or English, so that I can interact with the system in my preferred language.

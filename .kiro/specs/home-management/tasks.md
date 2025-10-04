@@ -22,6 +22,14 @@
     - Write unit tests for authentication services and guards
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
 
+  - [x] 2.3 Fix password reset functionality
+    - Create PasswordResetForm component with email input and validation
+    - Update auth page to use PasswordResetForm instead of placeholder text
+    - Add new translation keys for password reset messages in both languages
+    - Implement proper error handling and success feedback
+    - Write unit tests for PasswordResetForm component
+    - _Requirements: 4.1.1, 4.1.2, 4.1.3, 4.1.4, 4.1.5, 4.1.6, 4.1.7, 4.1.8, 4.1.9_
+
 - [x] 3. User Management System Implementation
   - [x] 3.1 Create user data models and interfaces
     - Define TypeScript interfaces for User entity in shared libs

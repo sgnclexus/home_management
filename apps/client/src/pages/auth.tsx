@@ -6,6 +6,7 @@ import { useTranslation } from 'next-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { LoginForm } from '../components/auth/LoginForm';
 import { RegisterForm } from '../components/auth/RegisterForm';
+import { PasswordResetForm } from '../components/auth/PasswordResetForm';
 
 type AuthMode = 'login' | 'register' | 'reset';
 
@@ -66,20 +67,12 @@ export default function AuthPage() {
         )}
 
         {mode === 'reset' && (
-          <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-bold text-center text-gray-900 mb-6">
-              {t('auth.resetPassword')}
-            </h2>
-            <p className="text-center text-gray-600 mb-4">
-              {t('auth.resetPasswordDescription')}
-            </p>
-            <button
-              onClick={() => setMode('login')}
-              className="w-full text-blue-600 hover:text-blue-800 font-medium"
-            >
-              {t('auth.backToLogin')}
-            </button>
-          </div>
+          <PasswordResetForm
+            onSuccess={() => {
+              // Keep the user on the success screen, they can navigate back manually
+            }}
+            onSwitchToLogin={() => setMode('login')}
+          />
         )}
       </div>
     </div>

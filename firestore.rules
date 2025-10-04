@@ -1,123 +1,101 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Helper functions
-    function isAuthenticated() {
-      return request.auth != null;
-    }
-    
-    function isOwner(userId) {
-      return request.auth.uid == userId;
-    }
-    
-    function hasRole(role) {
-      return isAuthenticated() && 
-             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role;
-    }
-    
-    function isAdmin() {
-      return hasRole('admin');
-    }
-    
-    function isVigilance() {
-      return hasRole('vigilance');
-    }
-    
-    function isResident() {
-      return hasRole('resident');
-    }
-    
-    function isSecurity() {
-      return hasRole('security');
-    }
-    
-    function canReadUserData(userId) {
-      return isOwner(userId) || isAdmin() || isVigilance();
-    }
-    
-    function canWriteUserData(userId) {
-      return isOwner(userId) || isAdmin();
-    }
-
     // Users collection
     match /users/{userId} {
-      allow read: if canReadUserData(userId);
-      allow write: if canWriteUserData(userId);
-      allow create: if isAdmin();
+      // Users can read and update their own profile
+      allow read, update: if request.auth != null && request.auth.uid == userId;
+      // Admins can read and write all user documents
+      allow read, write: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      // Vigilance can read user documents
+      allow read: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'vigilance'];
     }
 
     // Payments collection
     match /payments/{paymentId} {
-      allow read: if isAuthenticated() && 
-                     (isOwner(resource.data.userId) || isAdmin() || isVigilance());
-      allow create: if isAdmin();
-      allow update: if isAdmin() || (isOwner(resource.data.userId) && 
-                                   request.data.diff(resource.data).affectedKeys()
-                                   .hasOnly(['status', 'paidDate', 'paymentMethod', 'transactionId']));
-      allow delete: if isAdmin();
-    }
-
-    // Payment transaction logs collection
-    match /payment_transaction_logs/{logId} {
-      allow read: if isAdmin() || isVigilance();
-      allow write: if false; // Only server can write logs
-    }
-
-    // Audit logs collection
-    match /audit_logs/{logId} {
-      allow read: if isAdmin();
-      allow write: if false; // Only server can write logs
+      // Users can read their own payments
+      allow read: if request.auth != null && 
+        (resource.data.userId == request.auth.uid || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'vigilance']);
+      // Users can create payments for themselves
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      // Admins can read and write all payments
+      allow read, write: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      // Users can update their own payment status (for processing)
+      allow update: if request.auth != null && 
+        (resource.data.userId == request.auth.uid || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'vigilance']);
     }
 
     // Reservations collection
     match /reservations/{reservationId} {
-      allow read: if isAuthenticated() && 
-                     (isOwner(resource.data.userId) || isAdmin() || isVigilance() || isSecurity());
-      allow create: if isAuthenticated() && isOwner(request.resource.data.userId);
-      allow update: if isAuthenticated() && 
-                       (isOwner(resource.data.userId) || isAdmin()) &&
-                       request.data.diff(resource.data).affectedKeys()
-                       .hasOnly(['status', 'notes', 'updatedAt']);
-      allow delete: if isOwner(resource.data.userId) || isAdmin();
-    }
-
-    // Common areas collection
-    match /common_areas/{areaId} {
-      allow read: if isAuthenticated();
-      allow write: if isAdmin();
+      // Users can read their own reservations
+      allow read: if request.auth != null && 
+        (resource.data.userId == request.auth.uid || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'vigilance']);
+      // Users can create reservations for themselves
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      // Users can update/delete their own reservations
+      allow update, delete: if request.auth != null && 
+        (resource.data.userId == request.auth.uid || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'vigilance']);
+      // Admins can read and write all reservations
+      allow read, write: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
     // Meetings collection
     match /meetings/{meetingId} {
-      allow read: if isAuthenticated();
-      allow create: if isAdmin();
-      allow update: if isAdmin() || 
-                       (isAuthenticated() && 
-                        request.data.diff(resource.data).affectedKeys()
-                        .hasOnly(['attendees', 'updatedAt']));
-      allow delete: if isAdmin();
-
-      // Votes subcollection
-      match /votes/{voteId} {
-        allow read: if isAuthenticated();
-        allow create: if isAdmin();
-        allow update: if isAuthenticated() && 
-                         request.data.diff(resource.data).affectedKeys()
-                         .hasOnly(['votes', 'results', 'updatedAt']);
-        allow delete: if isAdmin();
-      }
+      // All authenticated users can read meetings
+      allow read: if request.auth != null;
+      // Only admins can create, update, and delete meetings
+      allow write: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
     // Notifications collection
     match /notifications/{notificationId} {
-      allow read: if isAuthenticated() && 
-                     (isOwner(resource.data.userId) || isAdmin());
-      allow create: if isAdmin();
-      allow update: if isOwner(resource.data.userId) && 
-                       request.data.diff(resource.data).affectedKeys()
-                       .hasOnly(['read', 'readAt']);
-      allow delete: if isOwner(resource.data.userId) || isAdmin();
+      // Users can read their own notifications
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      // Users can update their own notifications (mark as read)
+      allow update: if request.auth != null && 
+        resource.data.userId == request.auth.uid &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read', 'updatedAt']);
+      // Admins can create notifications
+      allow create: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Areas collection (for reservations)
+    match /areas/{areaId} {
+      // All authenticated users can read areas
+      allow read: if request.auth != null;
+      // Only admins can create, update, and delete areas
+      allow write: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Votes collection (for meetings)
+    match /votes/{voteId} {
+      // All authenticated users can read votes
+      allow read: if request.auth != null;
+      // Users can create votes (cast their vote)
+      allow create: if request.auth != null;
+      // Only admins can update and delete votes
+      allow update, delete: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Agreements collection (for meetings)
+    match /agreements/{agreementId} {
+      // All authenticated users can read agreements
+      allow read: if request.auth != null;
+      // Only admins can create, update, and delete agreements
+      allow write: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
   }
 }

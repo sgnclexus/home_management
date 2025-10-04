@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from 'next-i18next';
+import { UserRole } from '@home-management/types';
 
 interface RegisterFormProps {
   onSuccess?: () => void;
@@ -18,17 +19,20 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
     password: '',
     confirmPassword: '',
     displayName: '',
+    role: UserRole.RESIDENT, // Default to resident
+    apartmentNumber: '',
+    phoneNumber: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value,
     }));
-  };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +54,11 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
     }
 
     try {
-      await signUp(formData.email, formData.password, formData.displayName);
+      await signUp(formData.email, formData.password, formData.displayName, {
+        role: formData.role,
+        apartmentNumber: formData.apartmentNumber,
+        phoneNumber: formData.phoneNumber,
+      });
       onSuccess?.();
     } catch (error: any) {
       setError(error.message || t('auth.registerError'));
@@ -101,6 +109,58 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder={t('auth.emailPlaceholder')}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
+            {t('auth.role')}
+          </label>
+          <select
+            id="role"
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value={UserRole.RESIDENT}>{t('roles.resident')}</option>
+            <option value={UserRole.VIGILANCE}>{t('roles.vigilance')}</option>
+            <option value={UserRole.SECURITY}>{t('roles.security')}</option>
+            <option value={UserRole.ADMIN}>{t('roles.admin')}</option>
+          </select>
+          <p className="text-xs text-gray-500 mt-1">
+            {t('auth.roleDescription')}
+          </p>
+        </div>
+
+        <div>
+          <label htmlFor="apartmentNumber" className="block text-sm font-medium text-gray-700 mb-1">
+            {t('profile.apartmentNumber')}
+          </label>
+          <input
+            type="text"
+            id="apartmentNumber"
+            name="apartmentNumber"
+            value={formData.apartmentNumber}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder={t('profile.apartmentPlaceholder')}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">
+            {t('profile.phoneNumber')}
+          </label>
+          <input
+            type="tel"
+            id="phoneNumber"
+            name="phoneNumber"
+            value={formData.phoneNumber}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder={t('profile.phonePlaceholder')}
           />
         </div>
 

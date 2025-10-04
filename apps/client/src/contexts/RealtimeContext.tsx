@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback, useMemo } from 'react';
 import { 
   useRealtimePayments, 
   useRealtimeReservations, 
@@ -90,97 +90,35 @@ interface RealtimeProviderProps {
 
 // Realtime provider component
 export const RealtimeProvider: React.FC<RealtimeProviderProps> = ({ children }) => {
-  const { user, userRole } = useAuth();
-  const connectionStatus = useConnectionStatus();
+  const { user, userRole, loading } = useAuth();
+  
+  // Only set up real-time listeners when user is authenticated, has a role, and auth is not loading
+  const shouldEnableRealtime = !loading && user && userRole;
+  const connectionStatus = useConnectionStatus(!!shouldEnableRealtime);
   
   // State for notifications
   const [notifications, setNotifications] = useState<RealtimeNotification[]>([]);
   
+  // Memoize options objects to prevent infinite re-renders
+  const realtimeOptions = useMemo(() => ({
+    enableOptimisticUpdates: true,
+    retryOnError: true,
+    maxRetries: 3
+  }), []);
+
+  const meetingsOptions = useMemo(() => ({
+    enableOptimisticUpdates: true,
+    retryOnError: true,
+    maxRetries: 3,
+    disabled: !shouldEnableRealtime
+  }), [shouldEnableRealtime]);
+  
   // Real-time data hooks with optimistic updates enabled
-  const paymentsState = useRealtimePayments(user?.uid, { 
-    enableOptimisticUpdates: true,
-    retryOnError: true,
-    maxRetries: 3
-  });
+  const paymentsState = useRealtimePayments(shouldEnableRealtime ? user?.uid : undefined, realtimeOptions);
   
-  const reservationsState = useRealtimeReservations(user?.uid, { 
-    enableOptimisticUpdates: true,
-    retryOnError: true,
-    maxRetries: 3
-  });
+  const reservationsState = useRealtimeReservations(shouldEnableRealtime ? user?.uid : undefined, realtimeOptions);
   
-  const meetingsState = useRealtimeMeetings({ 
-    enableOptimisticUpdates: true,
-    retryOnError: true,
-    maxRetries: 3
-  });
-  
-  // Optimistic updates hooks
-  const paymentsOptimistic = useOptimisticPayments({
-    onSuccess: (id, data) => {
-      console.log('Payment update successful:', id, data);
-      addNotification({
-        type: 'payment',
-        title: 'Payment Updated',
-        message: 'Your payment has been processed successfully.',
-        data: { paymentId: id }
-      });
-    },
-    onError: (id, error) => {
-      console.error('Payment update failed:', id, error);
-      addNotification({
-        type: 'payment',
-        title: 'Payment Error',
-        message: 'Failed to process payment. Please try again.',
-        data: { paymentId: id, error: error.message }
-      });
-    },
-    conflictResolution: 'server-wins'
-  });
-  
-  const reservationsOptimistic = useOptimisticReservations({
-    onSuccess: (id, data) => {
-      console.log('Reservation update successful:', id, data);
-      addNotification({
-        type: 'reservation',
-        title: 'Reservation Updated',
-        message: 'Your reservation has been updated successfully.',
-        data: { reservationId: id }
-      });
-    },
-    onError: (id, error) => {
-      console.error('Reservation update failed:', id, error);
-      addNotification({
-        type: 'reservation',
-        title: 'Reservation Error',
-        message: 'Failed to update reservation. Please try again.',
-        data: { reservationId: id, error: error.message }
-      });
-    },
-    conflictResolution: 'merge'
-  });
-  
-  const meetingsOptimistic = useOptimisticMeetings({
-    onSuccess: (id, data) => {
-      console.log('Meeting update successful:', id, data);
-      addNotification({
-        type: 'meeting',
-        title: 'Meeting Updated',
-        message: 'Meeting information has been updated.',
-        data: { meetingId: id }
-      });
-    },
-    onError: (id, error) => {
-      console.error('Meeting update failed:', id, error);
-      addNotification({
-        type: 'meeting',
-        title: 'Meeting Error',
-        message: 'Failed to update meeting. Please try again.',
-        data: { meetingId: id, error: error.message }
-      });
-    },
-    conflictResolution: 'server-wins'
-  });
+  const meetingsState = useRealtimeMeetings(meetingsOptions);
   
   // Add notification helper
   const addNotification = useCallback((notification: Omit<RealtimeNotification, 'id' | 'timestamp' | 'read'>) => {
@@ -193,6 +131,78 @@ export const RealtimeProvider: React.FC<RealtimeProviderProps> = ({ children }) 
     
     setNotifications(prev => [newNotification, ...prev].slice(0, 50)); // Keep only last 50 notifications
   }, []);
+
+  // Memoize optimistic update options to prevent infinite re-renders
+  const paymentsOptimisticOptions = useMemo(() => ({
+    onSuccess: (id: string, data: any) => {
+      console.log('Payment update successful:', id, data);
+      addNotification({
+        type: 'payment' as const,
+        title: 'Payment Updated',
+        message: 'Your payment has been processed successfully.',
+        data: { paymentId: id }
+      });
+    },
+    onError: (id: string, error: any) => {
+      console.error('Payment update failed:', id, error);
+      addNotification({
+        type: 'payment' as const,
+        title: 'Payment Error',
+        message: 'Failed to process payment. Please try again.',
+        data: { paymentId: id, error: error.message }
+      });
+    },
+    conflictResolution: 'server-wins' as const
+  }), [addNotification]);
+
+  const reservationsOptimisticOptions = useMemo(() => ({
+    onSuccess: (id: string, data: any) => {
+      console.log('Reservation update successful:', id, data);
+      addNotification({
+        type: 'reservation' as const,
+        title: 'Reservation Updated',
+        message: 'Your reservation has been updated successfully.',
+        data: { reservationId: id }
+      });
+    },
+    onError: (id: string, error: any) => {
+      console.error('Reservation update failed:', id, error);
+      addNotification({
+        type: 'reservation' as const,
+        title: 'Reservation Error',
+        message: 'Failed to update reservation. Please try again.',
+        data: { reservationId: id, error: error.message }
+      });
+    },
+    conflictResolution: 'merge' as const
+  }), [addNotification]);
+
+  const meetingsOptimisticOptions = useMemo(() => ({
+    onSuccess: (id: string, data: any) => {
+      console.log('Meeting update successful:', id, data);
+      addNotification({
+        type: 'meeting' as const,
+        title: 'Meeting Updated',
+        message: 'Meeting information has been updated.',
+        data: { meetingId: id }
+      });
+    },
+    onError: (id: string, error: any) => {
+      console.error('Meeting update failed:', id, error);
+      addNotification({
+        type: 'meeting' as const,
+        title: 'Meeting Error',
+        message: 'Failed to update meeting. Please try again.',
+        data: { meetingId: id, error: error.message }
+      });
+    },
+    conflictResolution: 'server-wins' as const
+  }), [addNotification]);
+
+  // Optimistic updates hooks
+  const paymentsOptimistic = useOptimisticPayments(paymentsOptimisticOptions);
+  const reservationsOptimistic = useOptimisticReservations(reservationsOptimisticOptions);
+  const meetingsOptimistic = useOptimisticMeetings(meetingsOptimisticOptions);
   
   // CRUD operations with optimistic updates
   const updatePayment = useCallback(async (id: string, data: Partial<Payment>) => {

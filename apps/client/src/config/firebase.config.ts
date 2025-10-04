@@ -38,6 +38,18 @@ const createFirebaseConfig = (): FirebaseConfig => {
     measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
   };
 
+  // Debug logging in development
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🔧 Firebase Config Debug:', {
+      apiKey: config.apiKey ? '✅ Set' : '❌ Missing',
+      authDomain: config.authDomain ? '✅ Set' : '❌ Missing',
+      projectId: config.projectId ? '✅ Set' : '❌ Missing',
+      storageBucket: config.storageBucket ? '✅ Set' : '❌ Missing',
+      messagingSenderId: config.messagingSenderId ? '✅ Set' : '❌ Missing',
+      appId: config.appId ? '✅ Set' : '❌ Missing',
+    });
+  }
+
   validateFirebaseConfig(config);
   return config;
 };

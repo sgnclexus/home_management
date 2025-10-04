@@ -5,6 +5,7 @@ import { useRealtime } from '../../contexts/RealtimeContext';
 import { ReservationCalendar } from './ReservationCalendar';
 import { ReservationBookingForm } from './ReservationBookingForm';
 import { DataLoadingState, RealtimeStatusBadge, OptimisticUpdateIndicator } from '../realtime/LoadingStates';
+import { formatDateTime, formatDateTimeRange } from '../../utils/dateUtils';
 import { 
   Reservation, 
   CommonArea, 
@@ -71,10 +72,11 @@ export const ReservationDashboard: React.FC = () => {
           name: 'Salón de Fiestas',
           description: 'Salón para eventos y celebraciones',
           capacity: 50,
-          availableHours: { start: '08:00', end: '24:00' },
+          availableHours: { start: '08:00', end: '23:00' },
           isActive: true,
           rules: [
-            'Reserva mínima de 4 horas',
+            'Reserva de 5 horas por bloque',
+            'Máximo 2 reservas por día',
             'Limpieza obligatoria después del evento',
             'No se permite música después de las 22:00'
           ],
@@ -105,16 +107,39 @@ export const ReservationDashboard: React.FC = () => {
         const startHour = parseInt(selectedArea.availableHours.start.split(':')[0]);
         const endHour = parseInt(selectedArea.availableHours.end.split(':')[0]);
         
-        for (let hour = startHour; hour < endHour; hour += 2) {
-          const start = new Date(selectedDate);
-          start.setHours(hour, 0, 0, 0);
-          const end = new Date(selectedDate);
-          end.setHours(hour + 2, 0, 0, 0);
+        // Special handling for party room (5-hour slots, max 2 per day)
+        if (selectedArea.name === 'Salón de Fiestas') {
+          // Two 5-hour slots: 8:00-13:00 and 15:00-20:00
+          const morningSlot = {
+            start: new Date(selectedDate),
+            end: new Date(selectedDate),
+            available: Math.random() > 0.3
+          };
+          morningSlot.start.setHours(8, 0, 0, 0);
+          morningSlot.end.setHours(13, 0, 0, 0);
           
-          // Mock availability - some slots are taken
-          const available = Math.random() > 0.3;
+          const afternoonSlot = {
+            start: new Date(selectedDate),
+            end: new Date(selectedDate),
+            available: Math.random() > 0.3
+          };
+          afternoonSlot.start.setHours(15, 0, 0, 0);
+          afternoonSlot.end.setHours(20, 0, 0, 0);
           
-          slots.push({ start, end, available });
+          slots.push(morningSlot, afternoonSlot);
+        } else {
+          // Regular 2-hour slots for other areas
+          for (let hour = startHour; hour < endHour; hour += 2) {
+            const start = new Date(selectedDate);
+            start.setHours(hour, 0, 0, 0);
+            const end = new Date(selectedDate);
+            end.setHours(hour + 2, 0, 0, 0);
+            
+            // Mock availability - some slots are taken
+            const available = Math.random() > 0.3;
+            
+            slots.push({ start, end, available });
+          }
         }
         
         setAvailableSlots(slots);
@@ -195,8 +220,8 @@ export const ReservationDashboard: React.FC = () => {
     }
   };
 
-  const formatDateTime = (date: Date) => {
-    return date.toLocaleDateString('es-ES', {
+  const formatReservationDateTime = (date: any) => {
+    return formatDateTime(date, 'es-ES', {
       weekday: 'short',
       month: 'short',
       day: 'numeric',
@@ -328,7 +353,7 @@ export const ReservationDashboard: React.FC = () => {
                           </div>
                           <div className="text-sm text-gray-600 space-y-1">
                             <div>
-                              <strong>{t('reservations.dateTime')}:</strong> {formatDateTime(reservation.startTime)} - {formatDateTime(reservation.endTime)}
+                              <strong>{t('reservations.dateTime')}:</strong> {formatDateTimeRange(reservation.startTime, reservation.endTime)}
                             </div>
                             {reservation.notes && (
                               <div>

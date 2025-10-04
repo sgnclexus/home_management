@@ -17,7 +17,11 @@ interface AuthContextType {
   userRole: UserRole | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, displayName: string) => Promise<void>;
+  signUp: (email: string, password: string, displayName: string, additionalData?: {
+    role?: UserRole;
+    apartmentNumber?: string;
+    phoneNumber?: string;
+  }) => Promise<void>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   refreshUserRole: () => Promise<void>;
@@ -40,7 +44,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Fetch user role from backend
   const fetchUserRole = async (user: User): Promise<UserRole | null> => {
     try {
-      const token = await user.getIdToken();
+      console.log('🔍 Fetching user role for:', user.email);
+      const token = await user.getIdToken(true); // Force refresh token
+      console.log('🔑 Got ID token (first 50 chars):', token.substring(0, 50) + '...');
+      
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/profile`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -48,16 +55,60 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         },
       });
 
+      console.log('📡 Profile API response status:', response.status);
+
       if (response.ok) {
         const userData = await response.json();
+        console.log('✅ Successfully fetched user role:', userData.role);
         return userData.role as UserRole;
+      } else if (response.status === 401) {
+        console.error('❌ Failed to fetch user role: Unauthorized - trying to create profile');
+        // If user profile doesn't exist, try to create it with default role
+        return await createMissingUserProfile(user, token);
       } else {
-        console.error('Failed to fetch user role:', response.statusText);
+        const errorText = await response.text();
+        console.error('❌ Failed to fetch user role:', response.status, response.statusText, errorText);
         return null;
       }
     } catch (error) {
-      console.error('Error fetching user role:', error);
+      console.error('❌ Error fetching user role:', error);
       return null;
+    }
+  };
+
+  // Create missing user profile
+  const createMissingUserProfile = async (user: User, token: string): Promise<UserRole | null> => {
+    try {
+      console.log('🔧 Creating missing user profile for:', user.email);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: user.email,
+          displayName: user.displayName || user.email?.split('@')[0] || 'User',
+          role: UserRole.RESIDENT, // Default role
+          apartmentNumber: '',
+          phoneNumber: '',
+        }),
+      });
+
+      console.log('📡 Register API response status:', response.status);
+
+      if (response.ok) {
+        const userData = await response.json();
+        console.log('✅ User profile created successfully:', userData);
+        return userData.user.role as UserRole;
+      } else {
+        const errorText = await response.text();
+        console.error('❌ Failed to create user profile:', response.status, response.statusText, errorText);
+        return UserRole.RESIDENT; // Fallback to resident role
+      }
+    } catch (error) {
+      console.error('❌ Error creating user profile:', error);
+      return UserRole.RESIDENT; // Fallback to resident role
     }
   };
 
@@ -82,7 +133,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   // Sign up function
-  const signUp = async (email: string, password: string, displayName: string): Promise<void> => {
+  const signUp = async (
+    email: string, 
+    password: string, 
+    displayName: string, 
+    additionalData?: {
+      role?: UserRole;
+      apartmentNumber?: string;
+      phoneNumber?: string;
+    }
+  ): Promise<void> => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth(), email, password);
       
@@ -102,6 +162,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         body: JSON.stringify({
           email,
           displayName,
+          role: additionalData?.role || UserRole.RESIDENT,
+          apartmentNumber: additionalData?.apartmentNumber || '',
+          phoneNumber: additionalData?.phoneNumber || '',
         }),
       });
 

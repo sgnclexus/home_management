@@ -86,6 +86,15 @@
     "forgotPassword": "¿Olvidó su contraseña?",
     "resetPassword": "Restablecer Contraseña",
     "resetPasswordDescription": "Ingrese su correo para recibir instrucciones de restablecimiento",
+    "resetPasswordEmailLabel": "Dirección de Correo Electrónico",
+    "resetPasswordEmailPlaceholder": "Ingrese su dirección de correo electrónico",
+    "sendResetEmail": "Enviar Correo de Restablecimiento",
+    "sendingResetEmail": "Enviando...",
+    "resetEmailSent": "Correo de restablecimiento enviado exitosamente",
+    "resetEmailSentDescription": "Si existe una cuenta con ese correo electrónico, recibirá instrucciones de restablecimiento de contraseña en breve.",
+    "resetEmailError": "Error al enviar el correo de restablecimiento. Intente nuevamente.",
+    "emailRequired": "La dirección de correo electrónico es requerida",
+    "emailInvalid": "Por favor ingrese una dirección de correo electrónico válida",
     "backToLogin": "Volver al Inicio de Sesión",
     "noAccount": "¿No tiene una cuenta?",
     "hasAccount": "¿Ya tiene una cuenta?",
@@ -94,7 +103,9 @@
     "loginError": "Error al iniciar sesión. Verifique sus credenciales.",
     "registerError": "Error al registrarse. Intente nuevamente.",
     "passwordMismatch": "Las contraseñas no coinciden",
-    "passwordTooShort": "La contraseña debe tener al menos 8 caracteres"
+    "passwordTooShort": "La contraseña debe tener al menos 8 caracteres",
+    "role": "Rol",
+    "roleDescription": "Seleccione su rol en el condominio"
   },
   "profile": {
     "title": "Perfil de Usuario",
@@ -232,6 +243,38 @@
         "overdue": "El pago está vencido y requiere atención inmediata",
         "cancelled": "El pago ha sido cancelado y no será cobrado"
       }
+    }
+  },
+  "admin": {
+    "users": {
+      "title": "Gestión de Usuarios",
+      "accessDenied": "Acceso denegado. Se requieren privilegios de administrador.",
+      "refresh": "Actualizar",
+      "loading": "Cargando...",
+      "search": "Buscar",
+      "searchPlaceholder": "Buscar por nombre o correo",
+      "filterByRole": "Filtrar por Rol",
+      "filterByStatus": "Filtrar por Estado",
+      "allRoles": "Todos los Roles",
+      "allStatuses": "Todos los Estados",
+      "user": "Usuario",
+      "role": "Rol",
+      "apartment": "Apartamento",
+      "status": "Estado",
+      "actions": "Acciones",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "activate": "Activar",
+      "deactivate": "Desactivar",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "showing": "Mostrando {{start}} a {{end}} de {{total}} resultados",
+      "loadError": "Error al cargar usuarios",
+      "roleUpdateSuccess": "Rol de usuario actualizado exitosamente",
+      "roleUpdateError": "Error al actualizar el rol del usuario",
+      "activateSuccess": "Usuario activado exitosamente",
+      "deactivateSuccess": "Usuario desactivado exitosamente",
+      "statusUpdateError": "Error al actualizar el estado del usuario"
     }
   },
   "reservations": {

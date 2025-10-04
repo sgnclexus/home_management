@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { 
   collection, 
   query, 
@@ -34,16 +34,22 @@ interface RealtimeOptions {
   retryOnError?: boolean;
   maxRetries?: number;
   retryDelay?: number;
+  disabled?: boolean;
 }
 
 // Connection monitor hook
-export const useConnectionStatus = (): ConnectionStatus => {
+export const useConnectionStatus = (enabled: boolean = true): ConnectionStatus => {
   const [status, setStatus] = useState<ConnectionStatus>('disconnected');
   const retryTimeoutRef = useRef<NodeJS.Timeout>();
   const retryCountRef = useRef(0);
   const maxRetries = 3;
 
   const checkConnection = useCallback(async () => {
+    if (!enabled) {
+      setStatus('disconnected');
+      return;
+    }
+
     try {
       // Simple connectivity test using a lightweight Firestore operation
       const testDoc = doc(firestore(), 'connection-test', 'test');
@@ -63,9 +69,14 @@ export const useConnectionStatus = (): ConnectionStatus => {
         }, 2000 * retryCountRef.current); // Exponential backoff
       }
     }
-  }, []);
+  }, [enabled]);
 
   useEffect(() => {
+    if (!enabled) {
+      setStatus('disconnected');
+      return;
+    }
+
     // Initial connection check
     checkConnection();
 
@@ -78,7 +89,7 @@ export const useConnectionStatus = (): ConnectionStatus => {
         clearTimeout(retryTimeoutRef.current);
       }
     };
-  }, [checkConnection]);
+  }, [checkConnection, enabled]);
 
   return status;
 };
@@ -104,7 +115,8 @@ const useRealtimeCollection = <T>(
   const {
     enableOptimisticUpdates = false,
     retryOnError = true,
-    retryDelay = 2000
+    retryDelay = 2000,
+    disabled = false
   } = options;
 
   // Apply optimistic update
@@ -125,13 +137,39 @@ const useRealtimeCollection = <T>(
     optimisticUpdatesRef.current.delete(id);
   }, []);
 
+  // Memoize query constraints string for dependency comparison
+  const queryConstraintsKey = useMemo(() => {
+    return JSON.stringify(queryConstraints.map(constraint => {
+      // Create a stable key for each constraint
+      if (constraint.type === 'where') {
+        return `where:${constraint.field}:${constraint.op}:${constraint.value}`;
+      } else if (constraint.type === 'orderBy') {
+        return `orderBy:${constraint.field}:${constraint.direction || 'asc'}`;
+      } else if (constraint.type === 'limit') {
+        return `limit:${constraint.limit}`;
+      }
+      return constraint.toString();
+    }));
+  }, [queryConstraints]);
+
   // Set up real-time listener
   const setupListener = useCallback(() => {
+    // Don't set up listener if disabled or no query constraints
+    if (disabled || queryConstraints.length === 0) {
+      setState(prev => ({
+        ...prev,
+        data: [],
+        loading: false,
+        error: null,
+        connectionStatus: 'disconnected',
+        lastUpdated: null
+      }));
+      return;
+    }
+
     try {
       const collectionRef = collection(firestore(), collectionName);
-      const q = queryConstraints.length > 0 
-        ? query(collectionRef, ...queryConstraints)
-        : collectionRef;
+      const q = query(collectionRef, ...queryConstraints);
 
       const unsubscribe = onSnapshot(
         q,
@@ -160,6 +198,12 @@ const useRealtimeCollection = <T>(
         },
         (error: FirestoreError) => {
           console.error(`Real-time listener error for ${collectionName}:`, error);
+          
+          // Don't retry on permission errors to avoid spam
+          const shouldRetry = retryOnError && 
+            error.code !== 'permission-denied' && 
+            error.code !== 'unauthenticated';
+          
           setState(prev => ({
             ...prev,
             loading: false,
@@ -167,7 +211,7 @@ const useRealtimeCollection = <T>(
             connectionStatus: 'error'
           }));
 
-          if (retryOnError) {
+          if (shouldRetry) {
             setTimeout(() => {
               setupListener();
             }, retryDelay);
@@ -185,17 +229,30 @@ const useRealtimeCollection = <T>(
         connectionStatus: 'error'
       }));
     }
-  }, [collectionName, queryConstraints, retryOnError, retryDelay, enableOptimisticUpdates]);
+  }, [collectionName, queryConstraintsKey, retryOnError, retryDelay, enableOptimisticUpdates, disabled]);
 
   useEffect(() => {
-    setupListener();
+    // Only setup listener if not disabled and we have query constraints
+    if (!disabled && queryConstraints.length > 0) {
+      setupListener();
+    } else {
+      // Set initial empty state when disabled
+      setState(prev => ({
+        ...prev,
+        data: [],
+        loading: false,
+        error: null,
+        connectionStatus: 'disconnected',
+        lastUpdated: null
+      }));
+    }
 
     return () => {
       if (unsubscribeRef.current) {
         unsubscribeRef.current();
       }
     };
-  }, [setupListener]);
+  }, [setupListener, disabled]);
 
   // Update connection status
   useEffect(() => {
@@ -219,11 +276,14 @@ export const useRealtimePayments = (
   applyOptimisticUpdate: (id: string, data: Partial<Payment>) => void;
   removeOptimisticUpdate: (id: string) => void;
 } => {
-  const queryConstraints = userId 
-    ? [where('userId', '==', userId), orderBy('createdAt', 'desc')]
-    : [orderBy('createdAt', 'desc'), limit(100)];
+  // Memoize query constraints to prevent infinite re-renders
+  const queryConstraints = useMemo(() => {
+    return userId 
+      ? [where('userId', '==', userId), orderBy('createdAt', 'desc')]
+      : [];
+  }, [userId]);
 
-  const state = useRealtimeCollection<Payment>('payments', queryConstraints, options);
+  const state = useRealtimeCollection<Payment>('payments', queryConstraints, { ...options, disabled: !userId });
   
   const applyOptimisticUpdate = useCallback((id: string, data: Partial<Payment>) => {
     // Implementation will be added in the optimistic updates section
@@ -248,11 +308,14 @@ export const useRealtimeReservations = (
   applyOptimisticUpdate: (id: string, data: Partial<Reservation>) => void;
   removeOptimisticUpdate: (id: string) => void;
 } => {
-  const queryConstraints = userId 
-    ? [where('userId', '==', userId), orderBy('startTime', 'asc')]
-    : [orderBy('startTime', 'asc'), limit(100)];
+  // Memoize query constraints to prevent infinite re-renders
+  const queryConstraints = useMemo(() => {
+    return userId 
+      ? [where('userId', '==', userId), orderBy('startTime', 'asc')]
+      : [];
+  }, [userId]);
 
-  const state = useRealtimeCollection<Reservation>('reservations', queryConstraints, options);
+  const state = useRealtimeCollection<Reservation>('reservations', queryConstraints, { ...options, disabled: !userId });
   
   const applyOptimisticUpdate = useCallback((id: string, data: Partial<Reservation>) => {
     // Implementation will be added in the optimistic updates section
@@ -276,9 +339,12 @@ export const useRealtimeMeetings = (
   applyOptimisticUpdate: (id: string, data: Partial<Meeting>) => void;
   removeOptimisticUpdate: (id: string) => void;
 } => {
-  const queryConstraints = [orderBy('scheduledDate', 'desc'), limit(50)];
+  // Memoize query constraints to prevent infinite re-renders
+  const queryConstraints = useMemo(() => {
+    return [orderBy('scheduledDate', 'desc'), limit(50)];
+  }, []);
 
-  const state = useRealtimeCollection<Meeting>('meetings', queryConstraints, options);
+  const state = useRealtimeCollection<Meeting>('meetings', options?.disabled ? [] : queryConstraints, options);
   
   const applyOptimisticUpdate = useCallback((id: string, data: Partial<Meeting>) => {
     // Implementation will be added in the optimistic updates section
@@ -363,6 +429,12 @@ export const useRealtimeDocument = <T>(
         },
         (error: FirestoreError) => {
           console.error(`Real-time document listener error for ${collectionName}/${documentId}:`, error);
+          
+          // Don't retry on permission errors to avoid spam
+          const shouldRetry = retryOnError && 
+            error.code !== 'permission-denied' && 
+            error.code !== 'unauthenticated';
+          
           setState(prev => ({
             ...prev,
             loading: false,
@@ -370,7 +442,7 @@ export const useRealtimeDocument = <T>(
             connectionStatus: 'error'
           }));
 
-          if (retryOnError) {
+          if (shouldRetry) {
             setTimeout(() => {
               setupListener();
             }, retryDelay);

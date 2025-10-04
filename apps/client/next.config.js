@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+const path = require('path');
+
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
@@ -6,6 +8,8 @@ const nextConfig = {
   // Performance optimizations
   experimental: {
     optimizeCss: true,
+    // Enable transpilation of packages from the monorepo
+    transpilePackages: ['@home-management/types', '@home-management/utils'],
   },
 
   // Bundle analyzer
@@ -22,6 +26,21 @@ const nextConfig = {
         })
       );
     }
+
+    // Add support for TypeScript files in libs directory
+    config.module.rules.push({
+      test: /\.(ts|tsx)$/,
+      include: [path.resolve(__dirname, '../../libs')],
+      exclude: /node_modules/,
+      use: defaultLoaders.babel,
+    });
+
+    // Add path aliases for libs
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@home-management/types': path.resolve(__dirname, '../../libs/types/src'),
+      '@home-management/utils': path.resolve(__dirname, '../../libs/utils/src'),
+    };
 
     // Performance optimizations
     config.optimization = {

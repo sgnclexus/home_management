@@ -39,7 +39,7 @@ export class AuthService {
       const user = await this.usersService.create({
         ...userData,
         uid,
-        role: UserRole.RESIDENT, // Default role for new users
+        role: userData.role || UserRole.RESIDENT, // Use provided role or default to resident
         isActive: true,
       });
 
