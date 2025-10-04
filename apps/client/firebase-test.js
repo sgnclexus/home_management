@@ -3,9 +3,9 @@ const { initializeApp } = require('firebase/app');
 const { getAuth } = require('firebase/auth');
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBlIUI7gvwc4DmkpuRVQNJMWkH4p7lM8zA",
-  authDomain: "home-management-47e95.firebaseapp.com",
-  projectId: "home-management-47e95",
+  apiKey: "AIzaSyBlIUI7gvwc4Ddsadsadasam",
+  authDomain: "home-manag.firebaseapp.com",
+  projectId: "home-management",
   storageBucket: "home-management-47e95.firebasestorage.app",
   messagingSenderId: "325501118624",
   appId: "1:325501118624:web:98665e6a441f5fa01c41c5",
